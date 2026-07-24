@@ -3,112 +3,9 @@
 
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
+import { siteContent } from '../content/siteContent';
 
-const stats = [
-  { target: 25, label: 'Years of Experience' },
-  { target: 1200, label: 'Wells Drilled' },
-  { target: 98, label: '% Success Rate' },
-  { target: 24, label: 'Hr Emergency Response' },
-];
-
-const services = [
-  {
-    title: 'Domestic & Residential Water Wells',
-    description:
-      'Clean, reliable water for your home. We site, drill, and case residential water wells to deliver consistent water pressure and quality for your household.',
-    image: '/assets/img/rig-desert.jpg',
-    alt: 'Residential water well drilling',
-    fallback: '🏡',
-    features: ['New Well Drilling', 'Well Deepening', 'Well Rehabilitation', 'Decommissioning'],
-  },
-  {
-    title: 'Agricultural & Irrigation Wells',
-    description:
-      'High-yield irrigation wells engineered for livestock operations, row crops, and large-scale Texas farming. We understand the water demands of working land.',
-    image: '/assets/img/rig-field.jpg',
-    alt: 'Agricultural water well drilling',
-    fallback: '🌾',
-    features: ['New High-Capacity Wells', 'Well Deepening & Cleanouts', 'Pump & Motor Upgrades', 'Decommissioning'],
-  },
-  {
-    title: 'Commercial & Industrial Wells',
-    description:
-      'Reliable water supply for commercial developments, municipalities, and industrial operations. We bring the right equipment and experience for large-scale projects.',
-    image: '/assets/img/rig-field.jpg',
-    alt: 'Commercial water well drilling rig',
-    fallback: '🏗',
-    features: ['New Commercial Wells', 'Municipal Supply Wells', 'Well Deepening', 'Flow & Quality Testing'],
-  },
-  {
-    title: 'Pump Installation & Well Repair',
-    description:
-      'Low flow, sediment, or equipment failure? We diagnose and restore your existing well. Submersible and jet pump systems installed right and built to last.',
-    image: '/assets/img/rig-truck.jpg',
-    alt: 'Well pump installation and repair',
-    fallback: '🔧',
-    features: ['Submersible Pump Installation', 'Pressure Tank Systems', 'Water Quality Testing', 'Permits & State Compliance'],
-  },
-];
-
-const processSteps = [
-  {
-    number: '01',
-    title: 'Site Assessment',
-    description:
-      'We evaluate your land, pull geological data, and identify the optimal drill location before any equipment is mobilized.',
-  },
-  {
-    number: '02',
-    title: 'Permitting',
-    description:
-      'Every Texas permit, state filing, and required inspection is handled by our team. You stay focused on your property.',
-  },
-  {
-    number: '03',
-    title: 'Drilling',
-    description:
-      'We bring modern rigs, experienced operators, and real-time formation logging to reach the best aquifer for your land.',
-  },
-  {
-    number: '04',
-    title: 'Testing & Handoff',
-    description:
-      'Full yield and water quality testing, pump installation, and a reliable water source handed to you — ready to use.',
-  },
-];
-
-const faqs = [
-  {
-    question: 'How deep does the well need to be?',
-    answer:
-      'Well depth varies based on your specific location, local geology, and how much water you need. Central Texas wells typically range from 200 to 600+ feet depending on the aquifer. We assess your land and geological data to recommend the right depth before drilling begins.',
-  },
-  {
-    question: 'How much does a new well cost?',
-    answer:
-      "Costs depend on depth, soil and rock conditions, location, and any additional services like pump installation or water testing. We provide transparent, no-surprise quotes after evaluating your property. Every site is unique — we'll give you a fair price based on your actual conditions.",
-  },
-  {
-    question: 'Is well water safe to drink?',
-    answer:
-      'Properly drilled and cased wells in Central Texas can provide clean, safe drinking water. We perform water quality testing after every new well to verify safety. Periodic re-testing is recommended, as groundwater quality can change over time.',
-  },
-  {
-    question: 'What equipment do you use?',
-    answer:
-      "We operate modern rotary drill rigs capable of handling Texas's varied geology — from soft clay and caliche to hard limestone and granite. Our equipment is maintained to industry standards and operated by experienced, licensed Texas drillers.",
-  },
-  {
-    question: 'How long does it take to drill a well?',
-    answer:
-      "Most residential wells can be drilled in 1–3 days, depending on depth and conditions. Agricultural and commercial projects may take longer. We'll give you a realistic timeline upfront and keep you updated throughout the job.",
-  },
-  {
-    question: 'Do you handle permits and inspections?',
-    answer:
-      "Yes — we take care of all required Texas Water Well permits, groundwater conservation district filings, and any required inspections. You don't have to navigate state bureaucracy on your own.",
-  },
-];
+const { company } = siteContent;
 
 function SiteImage({ src, alt, className, fallback }) {
   const [hasError, setHasError] = useState(false);
@@ -124,29 +21,36 @@ function SiteImage({ src, alt, className, fallback }) {
   return <img className={className} src={src} alt={alt} onError={() => setHasError(true)} />;
 }
 
+function Logo() {
+  return (
+    <div className="logo">
+      <div className="logo-icon">{company.logoIcon}</div>
+      {company.logoPrimary} <span>&nbsp;{company.logoSecondary}</span>
+    </div>
+  );
+}
+
 function Header() {
   return (
     <>
       <div className="topbar">
-        <span className="license-badge">Licensed &amp; Insured · Central Texas</span>
+        <span className="license-badge">{company.licenseBadge}</span>
         <div>
-          <a href="tel:5123508061">📞 (512) 350-8061</a>
-          <a href="mailto:info@motalwellservices.com">✉ info@motalwellservices.com</a>
+          <a href={`tel:${company.phoneLink}`}>📞 {company.phoneDisplay}</a>
+          <a href={`mailto:${company.email}`}>✉ {company.email}</a>
         </div>
       </div>
 
       <nav>
-        <div className="logo">
-          <div className="logo-icon">⛏</div>
-          Motal <span>&nbsp;Well Services</span>
-        </div>
+        <Logo />
         <ul>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#process">Process</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="#quoteForm2" className="nav-cta">Quote</a></li>
+          {siteContent.navigation.map((item) => (
+            <li key={item.href}>
+              <a href={item.href} className={item.isCta ? 'nav-cta' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
         </ul>
       </nav>
     </>
@@ -154,22 +58,24 @@ function Header() {
 }
 
 function Hero() {
+  const { hero } = siteContent;
+
   return (
-    <section className="hero">
+    <section className="hero" style={{ '--hero-image': `url("${hero.image}")` }}>
       <div className="hero-bg" />
       <div className="hero-overlay" />
       <div className="hero-content">
-        <div className="hero-tag">Residential · Agricultural · Commercial</div>
+        <div className="hero-tag">{hero.tag}</div>
         <h1>
-          Professional.<br />Experienced.<br /><em>Knowledgeable.</em>
+          {hero.titleLines.map((line) => (
+            <span key={line}>{line}<br /></span>
+          ))}
+          <em>{hero.emphasizedTitle}</em>
         </h1>
-        <p>
-          Motal Well Services is a locally owned company serving Central Texas. We are committed to providing professional
-          water well drilling, pump installation, and well services for every customer.
-        </p>
+        <p>{hero.description}</p>
         <div className="hero-btns">
-          <a href="#services" className="btn-primary">Our Drilling Services</a>
-          <a href="#contact" className="btn-outline">Get a Free Quote</a>
+          <a href={hero.primaryButton.href} className="btn-primary">{hero.primaryButton.label}</a>
+          <a href={hero.secondaryButton.href} className="btn-outline">{hero.secondaryButton.label}</a>
         </div>
       </div>
     </section>
@@ -177,6 +83,7 @@ function Hero() {
 }
 
 function Stats() {
+  const { stats } = siteContent;
   const containerRef = useRef(null);
   const [values, setValues] = useState(stats.map(() => 0));
 
@@ -213,7 +120,7 @@ function Stats() {
       observer?.disconnect();
       animationFrames.forEach(cancelAnimationFrame);
     };
-  }, []);
+  }, [stats]);
 
   return (
     <div className="stats" ref={containerRef}>
@@ -228,14 +135,13 @@ function Stats() {
 }
 
 function Services() {
+  const { servicesSection, services } = siteContent;
+
   return (
     <section className="services" id="services">
-      <div className="section-eyebrow">What We Do</div>
-      <div className="section-title">Your Trusted Central Texas <span>Well Drilling Partner</span></div>
-      <p className="section-intro">
-        We provide complete water well solutions for homeowners, farmers, and commercial operations across Central Texas.
-        Every job is handled with the experience and care your property deserves.
-      </p>
+      <div className="section-eyebrow">{servicesSection.eyebrow}</div>
+      <div className="section-title">{servicesSection.title} <span>{servicesSection.titleAccent}</span></div>
+      <p className="section-intro">{servicesSection.intro}</p>
 
       <div className="service-grid">
         {services.map((service) => (
@@ -247,7 +153,7 @@ function Services() {
               <ul>
                 {service.features.map((feature) => <li key={feature}>{feature}</li>)}
               </ul>
-              <a href="#contact" className="service-link">Request a Quote →</a>
+              <a href={servicesSection.linkHref} className="service-link">{servicesSection.linkLabel}</a>
             </div>
           </div>
         ))}
@@ -257,34 +163,36 @@ function Services() {
 }
 
 function About() {
+  const { about } = siteContent;
   const [imageError, setImageError] = useState(false);
 
   return (
     <section style={{ background: 'var(--white)' }} id="about">
       <div className="about">
         <div className="about-text">
-          <div className="section-eyebrow">About Our Company</div>
-          <h2 className="section-title">Locally Owned.<br /><span>Texas Proud.</span></h2>
-          <p><strong>Motal Well Services</strong> is a locally owned company serving Central Texas and surrounding areas. We are committed to providing a quality product and professional service for every customer — from small residential wells to large commercial projects.</p>
-          <p>Our team of experienced drillers brings deep knowledge of Texas geology and groundwater. We take pride in protecting your water resource while delivering personalized, professional service from the first call to final handoff.</p>
-          <p>We handle all permits, filings, and inspections so you can stay focused on what matters most — your home, your farm, your business.</p>
+          <div className="section-eyebrow">{about.eyebrow}</div>
+          <h2 className="section-title">{about.title}<br /><span>{about.titleAccent}</span></h2>
+          {about.paragraphs.map((paragraph, index) => (
+            <p key={index}>
+              {paragraph.lead && <strong>{paragraph.lead}</strong>}
+              {paragraph.text}
+            </p>
+          ))}
           <div className="assoc-logos">
-            <div className="assoc-badge">Texas LIC. Well Driller</div>
-            <div className="assoc-badge">Bonded &amp; Insured</div>
-            <div className="assoc-badge">TGPC Member</div>
+            {about.badges.map((badge) => <div className="assoc-badge" key={badge}>{badge}</div>)}
           </div>
         </div>
 
         <div className="about-img-wrap">
           <img
-            src={imageError ? undefined : '/assets/img/rig-truck.jpg'}
-            alt="Motal Well Services drilling rig at work"
+            src={imageError ? undefined : about.image}
+            alt={about.imageAlt}
             onError={() => setImageError(true)}
             style={imageError ? { background: 'var(--navy2)' } : undefined}
           />
           <div className="about-years">
-            <span className="num">25+</span>
-            <span className="lbl">Years of Experience</span>
+            <span className="num">{about.years}</span>
+            <span className="lbl">{about.yearsLabel}</span>
           </div>
         </div>
       </div>
@@ -293,26 +201,30 @@ function About() {
 }
 
 function PhotoStrip() {
+  const { photoCallout } = siteContent;
+
   return (
     <div className="photo-strip">
-      <img src="/assets/img/rig-tower.jpg" alt="Water well drilling rig in Texas" />
+      <img src={photoCallout.image} alt={photoCallout.imageAlt} />
       <div className="photo-strip-overlay">
-        <h2>Ready to Find <span>Your Water?</span></h2>
-        <p>Get straight answers and a fair price. No runaround — just results.</p>
-        <a href="#contact" className="btn-primary">Get a Free Quote Today</a>
+        <h2>{photoCallout.title} <span>{photoCallout.titleAccent}</span></h2>
+        <p>{photoCallout.description}</p>
+        <a href={photoCallout.button.href} className="btn-primary">{photoCallout.button.label}</a>
       </div>
     </div>
   );
 }
 
 function Process() {
+  const { process } = siteContent;
+
   return (
     <section className="process" id="process">
-      <div className="section-eyebrow">How It Works</div>
-      <div className="section-title" style={{ color: 'white' }}>From First Call to <span>Flowing Water.</span></div>
-      <p className="section-intro">Our streamlined process takes the stress out of getting a new well. Here&apos;s what to expect from start to finish.</p>
+      <div className="section-eyebrow">{process.eyebrow}</div>
+      <div className="section-title" style={{ color: 'white' }}>{process.title} <span>{process.titleAccent}</span></div>
+      <p className="section-intro">{process.intro}</p>
       <div className="process-grid">
-        {processSteps.map((step) => (
+        {process.steps.map((step) => (
           <div className="process-step" key={step.number}>
             <div className="process-num">{step.number}</div>
             <h4>{step.title}</h4>
@@ -325,18 +237,20 @@ function Process() {
 }
 
 function FAQ() {
+  const { faq } = siteContent;
+
   return (
     <section className="faq" id="faq">
       <div className="faq-header">
-        <div className="section-eyebrow">FAQ&apos;s</div>
-        <div className="section-title">Let&apos;s Talk About <span>Drilling</span></div>
-        <p className="section-intro" style={{ marginBottom: 0 }}>Over the years we&apos;ve been asked a lot of questions. Here are the most common ones about water well drilling in Central Texas.</p>
+        <div className="section-eyebrow">{faq.eyebrow}</div>
+        <div className="section-title">{faq.title} <span>{faq.titleAccent}</span></div>
+        <p className="section-intro" style={{ marginBottom: 0 }}>{faq.intro}</p>
       </div>
       <div className="faq-grid">
-        {faqs.map((faq) => (
-          <div className="faq-item" key={faq.question}>
-            <h4>{faq.question}</h4>
-            <p>{faq.answer}</p>
+        {faq.items.map((item) => (
+          <div className="faq-item" key={item.question}>
+            <h4>{item.question}</h4>
+            <p>{item.answer}</p>
           </div>
         ))}
       </div>
@@ -345,6 +259,7 @@ function FAQ() {
 }
 
 function QuoteForm({ onSuccess }) {
+  const { quoteForm } = siteContent;
   const [isSending, setIsSending] = useState(false);
 
   const handleSubmit = async (event) => {
@@ -365,7 +280,7 @@ function QuoteForm({ onSuccess }) {
       form.reset();
       onSuccess();
     } catch (error) {
-      window.alert('There was an issue sending your request. Please call us directly at (512) 350-8061.');
+      window.alert(quoteForm.errorMessage);
       console.error('EmailJS error:', error);
     } finally {
       setIsSending(false);
@@ -376,30 +291,22 @@ function QuoteForm({ onSuccess }) {
     <section id="quoteForm2">
       <br />
       <div className="quote-form">
-        <h3>Free Quote Request</h3>
-        <p className="form-sub">Fill out the form below and we&apos;ll respond as quickly as possible.</p>
+        <h3>{quoteForm.title}</h3>
+        <p className="form-sub">{quoteForm.subtitle}</p>
         <form id="quoteForm" onSubmit={handleSubmit}>
           <div className="form-row">
-            <input type="text" id="field-name" name="name" placeholder="Full Name *" required />
-            <input type="tel" id="field-phone" name="phone" placeholder="Phone Number *" required />
+            <input type="text" id="field-name" name="name" placeholder={quoteForm.fields.name} required />
+            <input type="tel" id="field-phone" name="phone" placeholder={quoteForm.fields.phone} required />
           </div>
-          <input type="email" id="field-email" name="email" placeholder="Email Address" />
-          <input type="text" id="field-location" name="location" placeholder="Property Location / County" />
+          <input type="email" id="field-email" name="email" placeholder={quoteForm.fields.email} />
+          <input type="text" id="field-location" name="location" placeholder={quoteForm.fields.location} />
           <select id="field-service" name="service" defaultValue="">
-            <option value="" disabled>Type of Service Needed</option>
-            <option>New Residential Well</option>
-            <option>New Agricultural / Irrigation Well</option>
-            <option>New Commercial Well</option>
-            <option>Well Deepening</option>
-            <option>Well Repair / Rehabilitation</option>
-            <option>Pump Installation</option>
-            <option>Water Testing</option>
-            <option>Well Decommissioning</option>
-            <option>Not Sure / Need Advice</option>
+            <option value="" disabled>{quoteForm.fields.service}</option>
+            {quoteForm.serviceOptions.map((option) => <option key={option}>{option}</option>)}
           </select>
-          <textarea id="field-message" name="message" placeholder="Questions or additional details about your project..." />
+          <textarea id="field-message" name="message" placeholder={quoteForm.fields.message} />
           <button type="submit" className="form-submit" disabled={isSending}>
-            {isSending ? 'Sending…' : 'Submit Request →'}
+            {isSending ? quoteForm.sendingLabel : quoteForm.submitLabel}
           </button>
         </form>
       </div>
@@ -407,31 +314,42 @@ function QuoteForm({ onSuccess }) {
   );
 }
 
+function ContactDetail({ item }) {
+  if (item.type === 'phone') {
+    return <a href={`tel:${company.phoneLink}`}>{company.phoneDisplay}</a>;
+  }
+
+  if (item.type === 'email') {
+    return <a href={`mailto:${company.email}`}>{company.email}</a>;
+  }
+
+  if (item.lines) {
+    return <>{item.lines.map((line, index) => <span key={line}>{line}{index < item.lines.length - 1 && <br />}</span>)}</>;
+  }
+
+  return item.value;
+}
+
 function Contact({ onSuccess }) {
+  const { contact } = siteContent;
+
   return (
     <section style={{ background: 'var(--white)' }} id="contact">
       <div className="contact-section">
         <div className="contact-info">
-          <div className="section-eyebrow">Get in Touch</div>
-          <h2 className="section-title">Ready to Get <span>Started?</span></h2>
-          <p>If you&apos;re considering a new well or need help with an existing one, we&apos;re here to help. Fill out the form and our team will get back to you with a quote and answers to your questions.</p>
+          <div className="section-eyebrow">{contact.eyebrow}</div>
+          <h2 className="section-title">{contact.title} <span>{contact.titleAccent}</span></h2>
+          <p>{contact.intro}</p>
 
-          <div className="contact-item">
-            <div className="contact-icon">📞</div>
-            <div className="contact-detail"><strong>Phone</strong><a href="tel:5123508061">(512) 350-8061</a></div>
-          </div>
-          <div className="contact-item">
-            <div className="contact-icon">✉</div>
-            <div className="contact-detail"><strong>Email</strong><a href="mailto:info@motalwellservices.com">info@motalwellservices.com</a></div>
-          </div>
-          <div className="contact-item">
-            <div className="contact-icon">📍</div>
-            <div className="contact-detail"><strong>Service Area</strong>Central Texas &amp; Surrounding Counties</div>
-          </div>
-          <div className="contact-item">
-            <div className="contact-icon">🕐</div>
-            <div className="contact-detail"><strong>Hours</strong>Mon–Fri 7am–6pm · Sat 8am–2pm<br />Emergency Service Available 24/7</div>
-          </div>
+          {contact.items.map((item) => (
+            <div className="contact-item" key={item.label}>
+              <div className="contact-icon">{item.icon}</div>
+              <div className="contact-detail">
+                <strong>{item.label}</strong>
+                <ContactDetail item={item} />
+              </div>
+            </div>
+          ))}
         </div>
 
         <QuoteForm onSuccess={onSuccess} />
@@ -441,16 +359,20 @@ function Contact({ onSuccess }) {
 }
 
 function Footer() {
+  const { footer } = siteContent;
+
   return (
     <footer>
-      <div className="logo">Motal <span>&nbsp;Well Services</span></div>
-      <div className="footer-copy">© 2025 Motal Well Services — All Rights Reserved</div>
-      <div className="footer-right"><strong>Licensed Well Driller — Texas</strong>(512) 350-8061 &nbsp;|&nbsp; Central Texas</div>
+      <div className="logo">{company.logoPrimary} <span>&nbsp;{company.logoSecondary}</span></div>
+      <div className="footer-copy">{footer.copyright}</div>
+      <div className="footer-right"><strong>{footer.license}</strong>{company.phoneDisplay} &nbsp;|&nbsp; {company.serviceAreaShort}</div>
     </footer>
   );
 }
 
 function SuccessModal({ isOpen, onClose }) {
+  const { successModal } = siteContent;
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') onClose();
@@ -471,9 +393,9 @@ function SuccessModal({ isOpen, onClose }) {
       }}
     >
       <div className="modal">
-        <div className="modal-title">Request <span>Sent!</span></div>
-        <div className="modal-body">Thanks for reaching out. Your request was received successfully. We&apos;ll review the details and get back to you as soon as possible.</div>
-        <button className="modal-close" type="button" id="successModalClose" onClick={onClose}>Close</button>
+        <div className="modal-title">{successModal.title} <span>{successModal.titleAccent}</span></div>
+        <div className="modal-body">{successModal.body}</div>
+        <button className="modal-close" type="button" id="successModalClose" onClick={onClose}>{successModal.closeLabel}</button>
       </div>
     </div>
   );
