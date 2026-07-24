@@ -1,12 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
-
-import { useState } from 'react';
+import SiteImage from './SiteImage';
 import { siteContent } from '../content/siteContent';
 
 export default function About() {
   const { about } = siteContent;
-  const [imageError, setImageError] = useState(false);
 
   return (
     <section style={{ background: 'var(--white)' }} id="about">
@@ -26,11 +22,10 @@ export default function About() {
         </div>
 
         <div className="about-img-wrap">
-          <img
-            src={imageError ? undefined : about.image}
+          <SiteImage
+            src={about.image}
             alt={about.imageAlt}
-            onError={() => setImageError(true)}
-            style={imageError ? { background: 'var(--navy2)' } : undefined}
+            errorStyle={{ background: 'var(--navy2)' }}
           />
           <div className="about-years">
             <span className="num">{about.years}</span>

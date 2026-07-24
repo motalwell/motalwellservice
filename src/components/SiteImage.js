@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-export default function SiteImage({ src, alt, className, fallback }) {
+export default function SiteImage({ src, alt, className, fallback, errorStyle }) {
   const [hasError, setHasError] = useState(false);
 
   if (hasError && fallback) {
@@ -12,6 +12,10 @@ export default function SiteImage({ src, alt, className, fallback }) {
         {fallback}
       </div>
     );
+  }
+
+  if (hasError) {
+    return <img className={className} alt={alt} style={errorStyle} />;
   }
 
   return <img className={className} src={src} alt={alt} onError={() => setHasError(true)} />;

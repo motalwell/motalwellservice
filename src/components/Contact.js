@@ -1,4 +1,4 @@
-import QuoteForm from './QuoteForm';
+import QuoteRequest from './QuoteRequest';
 import { siteContent } from '../content/siteContent';
 
 const { company } = siteContent;
@@ -19,7 +19,7 @@ function ContactDetail({ item }) {
   return item.value;
 }
 
-export default function Contact({ onSuccess }) {
+export default function Contact() {
   const { contact } = siteContent;
 
   return (
@@ -41,7 +41,7 @@ export default function Contact({ onSuccess }) {
           ))}
         </div>
 
-        <QuoteForm onSuccess={onSuccess} />
+        <QuoteRequest />
       </div>
     </section>
   );
