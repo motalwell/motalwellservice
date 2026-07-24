@@ -7,7 +7,7 @@ export default function Process({ process }) {
       <p className="section-intro">{process.intro}</p>
       <div className="process-grid">
         {process.steps.map((step) => (
-          <div className="process-step" key={step.number}>
+          <div className="process-step" key={step.id}>
             <div className="process-num">{step.number}</div>
             <h4>{step.title}</h4>
             <p>{step.description}</p>

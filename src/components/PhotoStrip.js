@@ -4,7 +4,7 @@ export default function PhotoStrip({ photoCallout }) {
 
   return (
     <div className="photo-strip">
-      <img src={photoCallout.image} alt={photoCallout.imageAlt} />
+      <img src={photoCallout.image.url} alt={photoCallout.image.alt} />
       <div className="photo-strip-overlay">
         <h2>{photoCallout.title} <span>{photoCallout.titleAccent}</span></h2>
         <p>{photoCallout.description}</p>

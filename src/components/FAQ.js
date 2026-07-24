@@ -9,7 +9,7 @@ export default function FAQ({ faq }) {
       </div>
       <div className="faq-grid">
         {faq.items.map((item) => (
-          <div className="faq-item" key={item.question}>
+          <div className="faq-item" key={item.id}>
             <h4>{item.question}</h4>
             <p>{item.answer}</p>
           </div>

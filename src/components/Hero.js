@@ -1,14 +1,14 @@
 export default function Hero({ hero }) {
 
   return (
-    <section className="hero" style={{ '--hero-image': `url("${hero.image}")` }}>
+    <section className="hero" style={{ '--hero-image': `url("${hero.image.url}")` }}>
       <div className="hero-bg" />
       <div className="hero-overlay" />
       <div className="hero-content">
         <div className="hero-tag">{hero.tag}</div>
         <h1>
           {hero.titleLines.map((line) => (
-            <span key={line}>{line}<br /></span>
+            <span key={line.id}>{line.text}<br /></span>
           ))}
           <em>{hero.emphasizedTitle}</em>
         </h1>

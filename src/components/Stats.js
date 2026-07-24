@@ -44,7 +44,7 @@ export default function Stats({ stats }) {
   return (
     <div className="stats" ref={containerRef}>
       {stats.map((stat, index) => (
-        <div className="stat" key={stat.label}>
+        <div className="stat" key={stat.id}>
           <span className="stat-num" data-target={stat.target}>{values[index]}</span>
           <div className="stat-label">{stat.label}</div>
         </div>

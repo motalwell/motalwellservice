@@ -10,13 +10,13 @@ export default function Services({ servicesSection, services }) {
 
       <div className="service-grid">
         {services.map((service) => (
-          <div className="service-card" key={service.title}>
-            <SiteImage src={service.image} alt={service.alt} className="service-img" fallback={service.fallback} />
+          <div className="service-card" key={service.id}>
+            <SiteImage src={service.image.url} alt={service.image.alt} className="service-img" fallback={service.image.fallback} />
             <div className="service-body">
               <h3>{service.title}</h3>
               <p>{service.description}</p>
               <ul>
-                {service.features.map((feature) => <li key={feature}>{feature}</li>)}
+                {service.features.map((feature) => <li key={feature.id}>{feature.label}</li>)}
               </ul>
               <a href={servicesSection.linkHref} className="service-link">{servicesSection.linkLabel}</a>
             </div>

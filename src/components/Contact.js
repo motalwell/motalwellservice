@@ -10,7 +10,7 @@ function ContactDetail({ company, item }) {
   }
 
   if (item.lines) {
-    return <>{item.lines.map((line, index) => <span key={line}>{line}{index < item.lines.length - 1 && <br />}</span>)}</>;
+    return <>{item.lines.map((line, index) => <span key={line.id}>{line.text}{index < item.lines.length - 1 && <br />}</span>)}</>;
   }
 
   return item.value;
@@ -26,7 +26,7 @@ export default function Contact({ company, contact, quoteForm, successModal }) {
           <p>{contact.intro}</p>
 
           {contact.items.map((item) => (
-            <div className="contact-item" key={item.label}>
+            <div className="contact-item" key={item.id}>
               <div className="contact-icon">{item.icon}</div>
               <div className="contact-detail">
                 <strong>{item.label}</strong>

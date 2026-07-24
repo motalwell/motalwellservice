@@ -22,7 +22,7 @@ export default function Header({ company, navigation }) {
         <Logo company={company} />
         <ul>
           {navigation.map((item) => (
-            <li key={item.href}>
+            <li key={item.id}>
               <a href={item.href} className={item.isCta ? 'nav-cta' : undefined}>
                 {item.label}
               </a>

@@ -1,4 +1,6 @@
 export const siteContent = {
+  contentVersion: 1,
+
   company: {
     name: 'Motal Well Services',
     logoPrimary: 'Motal',
@@ -13,30 +15,37 @@ export const siteContent = {
   },
 
   navigation: [
-    { label: 'Services', href: '#services' },
-    { label: 'About', href: '#about' },
-    { label: 'Process', href: '#process' },
-    { label: 'FAQ', href: '#faq' },
-    { label: 'Contact', href: '#contact' },
-    { label: 'Quote', href: '#quoteForm2', isCta: true },
+    { id: 'nav-services', label: 'Services', href: '#services' },
+    { id: 'nav-about', label: 'About', href: '#about' },
+    { id: 'nav-process', label: 'Process', href: '#process' },
+    { id: 'nav-faq', label: 'FAQ', href: '#faq' },
+    { id: 'nav-contact', label: 'Contact', href: '#contact' },
+    { id: 'nav-quote', label: 'Quote', href: '#quoteForm2', isCta: true },
   ],
 
   hero: {
     tag: 'Residential · Agricultural · Commercial',
-    titleLines: ['Professional.', 'Experienced.'],
+    titleLines: [
+      { id: 'hero-title-professional', text: 'Professional.' },
+      { id: 'hero-title-experienced', text: 'Experienced.' },
+    ],
     emphasizedTitle: 'Knowledgeable.',
     description:
       'Motal Well Services is a locally owned company serving Central Texas. We are committed to providing professional water well drilling, pump installation, and well services for every customer.',
-    image: '/assets/img/hero-rig.jpg',
+    image: {
+      key: 'hero-image',
+      url: '/assets/img/hero-rig.jpg',
+      alt: 'Motal Well Services drilling rig',
+    },
     primaryButton: { label: 'Our Drilling Services', href: '#services' },
     secondaryButton: { label: 'Get a Free Quote', href: '#contact' },
   },
 
   stats: [
-    { target: 25, label: 'Years of Experience' },
-    { target: 1200, label: 'Wells Drilled' },
-    { target: 98, label: '% Success Rate' },
-    { target: 24, label: 'Hr Emergency Response' },
+    { id: 'stat-years-experience', target: 25, label: 'Years of Experience' },
+    { id: 'stat-wells-drilled', target: 1200, label: 'Wells Drilled' },
+    { id: 'stat-success-rate', target: 98, label: '% Success Rate' },
+    { id: 'stat-emergency-response', target: 24, label: 'Hr Emergency Response' },
   ],
 
   servicesSection: {
@@ -51,40 +60,76 @@ export const siteContent = {
 
   services: [
     {
+      id: 'service-residential',
       title: 'Domestic & Residential Water Wells',
       description:
         'Clean, reliable water for your home. We site, drill, and case residential water wells to deliver consistent water pressure and quality for your household.',
-      image: '/assets/img/rig-desert.jpg',
-      alt: 'Residential water well drilling',
-      fallback: '🏡',
-      features: ['New Well Drilling', 'Well Deepening', 'Well Rehabilitation', 'Decommissioning'],
+      image: {
+        key: 'service-residential-image',
+        url: '/assets/img/rig-desert.jpg',
+        alt: 'Residential water well drilling',
+        fallback: '🏡',
+      },
+      features: [
+        { id: 'service-residential-new-well', label: 'New Well Drilling' },
+        { id: 'service-residential-deepening', label: 'Well Deepening' },
+        { id: 'service-residential-rehabilitation', label: 'Well Rehabilitation' },
+        { id: 'service-residential-decommissioning', label: 'Decommissioning' },
+      ],
     },
     {
+      id: 'service-agricultural',
       title: 'Agricultural & Irrigation Wells',
       description:
         'High-yield irrigation wells engineered for livestock operations, row crops, and large-scale Texas farming. We understand the water demands of working land.',
-      image: '/assets/img/rig-field.jpg',
-      alt: 'Agricultural water well drilling',
-      fallback: '🌾',
-      features: ['New High-Capacity Wells', 'Well Deepening & Cleanouts', 'Pump & Motor Upgrades', 'Decommissioning'],
+      image: {
+        key: 'service-agricultural-image',
+        url: '/assets/img/rig-field.jpg',
+        alt: 'Agricultural water well drilling',
+        fallback: '🌾',
+      },
+      features: [
+        { id: 'service-agricultural-new-well', label: 'New High-Capacity Wells' },
+        { id: 'service-agricultural-deepening', label: 'Well Deepening & Cleanouts' },
+        { id: 'service-agricultural-pump-upgrades', label: 'Pump & Motor Upgrades' },
+        { id: 'service-agricultural-decommissioning', label: 'Decommissioning' },
+      ],
     },
     {
+      id: 'service-commercial',
       title: 'Commercial & Industrial Wells',
       description:
         'Reliable water supply for commercial developments, municipalities, and industrial operations. We bring the right equipment and experience for large-scale projects.',
-      image: '/assets/img/rig-field.jpg',
-      alt: 'Commercial water well drilling rig',
-      fallback: '🏗',
-      features: ['New Commercial Wells', 'Municipal Supply Wells', 'Well Deepening', 'Flow & Quality Testing'],
+      image: {
+        key: 'service-commercial-image',
+        url: '/assets/img/rig-field.jpg',
+        alt: 'Commercial water well drilling rig',
+        fallback: '🏗',
+      },
+      features: [
+        { id: 'service-commercial-new-well', label: 'New Commercial Wells' },
+        { id: 'service-commercial-municipal', label: 'Municipal Supply Wells' },
+        { id: 'service-commercial-deepening', label: 'Well Deepening' },
+        { id: 'service-commercial-testing', label: 'Flow & Quality Testing' },
+      ],
     },
     {
+      id: 'service-pump-repair',
       title: 'Pump Installation & Well Repair',
       description:
         'Low flow, sediment, or equipment failure? We diagnose and restore your existing well. Submersible and jet pump systems installed right and built to last.',
-      image: '/assets/img/rig-truck.jpg',
-      alt: 'Well pump installation and repair',
-      fallback: '🔧',
-      features: ['Submersible Pump Installation', 'Pressure Tank Systems', 'Water Quality Testing', 'Permits & State Compliance'],
+      image: {
+        key: 'service-pump-repair-image',
+        url: '/assets/img/rig-truck.jpg',
+        alt: 'Well pump installation and repair',
+        fallback: '🔧',
+      },
+      features: [
+        { id: 'service-pump-installation', label: 'Submersible Pump Installation' },
+        { id: 'service-pressure-tank', label: 'Pressure Tank Systems' },
+        { id: 'service-water-testing', label: 'Water Quality Testing' },
+        { id: 'service-permits', label: 'Permits & State Compliance' },
+      ],
     },
   ],
 
@@ -94,26 +139,39 @@ export const siteContent = {
     titleAccent: 'Texas Proud.',
     paragraphs: [
       {
+        id: 'about-company-intro',
         lead: 'Motal Well Services',
         text: ' is a locally owned company serving Central Texas and surrounding areas. We are committed to providing a quality product and professional service for every customer — from small residential wells to large commercial projects.',
       },
       {
+        id: 'about-experience',
         text: 'Our team of experienced drillers brings deep knowledge of Texas geology and groundwater. We take pride in protecting your water resource while delivering personalized, professional service from the first call to final handoff.',
       },
       {
+        id: 'about-permits',
         text: 'We handle all permits, filings, and inspections so you can stay focused on what matters most — your home, your farm, your business.',
       },
     ],
-    badges: ['Texas LIC. Well Driller', 'Bonded & Insured', 'TGPC Member'],
-    image: '/assets/img/rig-truck.jpg',
-    imageAlt: 'Motal Well Services drilling rig at work',
+    badges: [
+      { id: 'badge-licensed-well-driller', label: 'Texas LIC. Well Driller' },
+      { id: 'badge-bonded-insured', label: 'Bonded & Insured' },
+      { id: 'badge-tgpc-member', label: 'TGPC Member' },
+    ],
+    image: {
+      key: 'about-image',
+      url: '/assets/img/rig-truck.jpg',
+      alt: 'Motal Well Services drilling rig at work',
+    },
     years: '25+',
     yearsLabel: 'Years of Experience',
   },
 
   photoCallout: {
-    image: '/assets/img/rig-tower.jpg',
-    imageAlt: 'Water well drilling rig in Texas',
+    image: {
+      key: 'photo-callout-image',
+      url: '/assets/img/rig-tower.jpg',
+      alt: 'Water well drilling rig in Texas',
+    },
     title: 'Ready to Find',
     titleAccent: 'Your Water?',
     description: 'Get straight answers and a fair price. No runaround — just results.',
@@ -127,24 +185,28 @@ export const siteContent = {
     intro: "Our streamlined process takes the stress out of getting a new well. Here's what to expect from start to finish.",
     steps: [
       {
+        id: 'process-site-assessment',
         number: '01',
         title: 'Site Assessment',
         description:
           'We evaluate your land, pull geological data, and identify the optimal drill location before any equipment is mobilized.',
       },
       {
+        id: 'process-permitting',
         number: '02',
         title: 'Permitting',
         description:
           'Every Texas permit, state filing, and required inspection is handled by our team. You stay focused on your property.',
       },
       {
+        id: 'process-drilling',
         number: '03',
         title: 'Drilling',
         description:
           'We bring modern rigs, experienced operators, and real-time formation logging to reach the best aquifer for your land.',
       },
       {
+        id: 'process-testing-handoff',
         number: '04',
         title: 'Testing & Handoff',
         description:
@@ -161,31 +223,37 @@ export const siteContent = {
       "Over the years we've been asked a lot of questions. Here are the most common ones about water well drilling in Central Texas.",
     items: [
       {
+        id: 'faq-well-depth',
         question: 'How deep does the well need to be?',
         answer:
           'Well depth varies based on your specific location, local geology, and how much water you need. Central Texas wells typically range from 200 to 600+ feet depending on the aquifer. We assess your land and geological data to recommend the right depth before drilling begins.',
       },
       {
+        id: 'faq-well-cost',
         question: 'How much does a new well cost?',
         answer:
           "Costs depend on depth, soil and rock conditions, location, and any additional services like pump installation or water testing. We provide transparent, no-surprise quotes after evaluating your property. Every site is unique — we'll give you a fair price based on your actual conditions.",
       },
       {
+        id: 'faq-water-safety',
         question: 'Is well water safe to drink?',
         answer:
           'Properly drilled and cased wells in Central Texas can provide clean, safe drinking water. We perform water quality testing after every new well to verify safety. Periodic re-testing is recommended, as groundwater quality can change over time.',
       },
       {
+        id: 'faq-equipment',
         question: 'What equipment do you use?',
         answer:
           "We operate modern rotary drill rigs capable of handling Texas's varied geology — from soft clay and caliche to hard limestone and granite. Our equipment is maintained to industry standards and operated by experienced, licensed Texas drillers.",
       },
       {
+        id: 'faq-drilling-time',
         question: 'How long does it take to drill a well?',
         answer:
           "Most residential wells can be drilled in 1–3 days, depending on depth and conditions. Agricultural and commercial projects may take longer. We'll give you a realistic timeline upfront and keep you updated throughout the job.",
       },
       {
+        id: 'faq-permits-inspections',
         question: 'Do you handle permits and inspections?',
         answer:
           "Yes — we take care of all required Texas Water Well permits, groundwater conservation district filings, and any required inspections. You don't have to navigate state bureaucracy on your own.",
@@ -200,13 +268,17 @@ export const siteContent = {
     intro:
       "If you're considering a new well or need help with an existing one, we're here to help. Fill out the form and our team will get back to you with a quote and answers to your questions.",
     items: [
-      { icon: '📞', label: 'Phone', type: 'phone' },
-      { icon: '✉', label: 'Email', type: 'email' },
-      { icon: '📍', label: 'Service Area', value: 'Central Texas & Surrounding Counties' },
+      { id: 'contact-phone', icon: '📞', label: 'Phone', type: 'phone' },
+      { id: 'contact-email', icon: '✉', label: 'Email', type: 'email' },
+      { id: 'contact-service-area', icon: '📍', label: 'Service Area', value: 'Central Texas & Surrounding Counties' },
       {
+        id: 'contact-hours',
         icon: '🕐',
         label: 'Hours',
-        lines: ['Mon–Fri 7am–6pm · Sat 8am–2pm', 'Emergency Service Available 24/7'],
+        lines: [
+          { id: 'contact-hours-standard', text: 'Mon–Fri 7am–6pm · Sat 8am–2pm' },
+          { id: 'contact-hours-emergency', text: 'Emergency Service Available 24/7' },
+        ],
       },
     ],
   },
@@ -223,15 +295,15 @@ export const siteContent = {
       message: 'Questions or additional details about your project...',
     },
     serviceOptions: [
-      'New Residential Well',
-      'New Agricultural / Irrigation Well',
-      'New Commercial Well',
-      'Well Deepening',
-      'Well Repair / Rehabilitation',
-      'Pump Installation',
-      'Water Testing',
-      'Well Decommissioning',
-      'Not Sure / Need Advice',
+      { id: 'quote-service-residential', label: 'New Residential Well' },
+      { id: 'quote-service-agricultural', label: 'New Agricultural / Irrigation Well' },
+      { id: 'quote-service-commercial', label: 'New Commercial Well' },
+      { id: 'quote-service-deepening', label: 'Well Deepening' },
+      { id: 'quote-service-repair', label: 'Well Repair / Rehabilitation' },
+      { id: 'quote-service-pump', label: 'Pump Installation' },
+      { id: 'quote-service-testing', label: 'Water Testing' },
+      { id: 'quote-service-decommissioning', label: 'Well Decommissioning' },
+      { id: 'quote-service-advice', label: 'Not Sure / Need Advice' },
     ],
     submitLabel: 'Submit Request →',
     sendingLabel: 'Sending…',

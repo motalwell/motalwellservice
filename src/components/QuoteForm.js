@@ -45,7 +45,7 @@ export default function QuoteForm({ quoteForm, onSuccess }) {
           <input type="text" id="field-location" name="location" placeholder={quoteForm.fields.location} />
           <select id="field-service" name="service" defaultValue="">
             <option value="" disabled>{quoteForm.fields.service}</option>
-            {quoteForm.serviceOptions.map((option) => <option key={option}>{option}</option>)}
+            {quoteForm.serviceOptions.map((option) => <option key={option.id} value={option.label}>{option.label}</option>)}
           </select>
           <textarea id="field-message" name="message" placeholder={quoteForm.fields.message} />
           <button type="submit" className="form-submit" disabled={isSending}>
