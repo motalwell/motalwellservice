@@ -1,121 +1,486 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import Script from 'next/script';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-const pageMarkup = '<!-- TOP UTILITY BAR -->\n  <div class="topbar">\n    <span class="license-badge">Licensed &amp; Insured · Central Texas2</span>\n    <div>\n      <a href="tel:5123508061">📞 (512) 350-8061</a>\n      <a href="mailto:info@motalwellservices.com">✉ info@motalwellservices.com</a>\n    </div>\n  </div>\n\n  <!-- MAIN NAV -->\n  <nav>\n    <div class="logo">\n      <div class="logo-icon">⛏</div>\n      Motal <span>&nbsp;Well Services</span>\n    </div>\n    <ul>\n      <li><a href="#services">Services</a></li>\n      <li><a href="#about">About</a></li>\n      <li><a href="#process">Process</a></li>\n      <li><a href="#faq">FAQ</a></li>\n      <li><a href="#contact">Contact</a></li>\n      <li><a href="#quoteForm2" class="nav-cta">Quote</a></li>\n    </ul>\n  </nav>\n\n  <!-- HERO -->\n  <section class="hero">\n    <div class="hero-bg"></div>\n    <div class="hero-overlay"></div>\n    <div class="hero-content">\n      <div class="hero-tag">Residential · Agricultural · Commercial</div>\n      <h1>Professional.<br>Experienced.<br><em>Knowledgeable.</em></h1>\n      <p>Motal Well Services is a locally owned company serving Central Texas. We are committed to providing professional water well drilling, pump installation, and well services for every customer.</p>\n      <div class="hero-btns">\n        <a href="#services" class="btn-primary">Our Drilling Services</a>\n        <a href="#contact" class="btn-outline">Get a Free Quote</a>\n      </div>\n    </div>\n  </section>\n\n  <!-- STATS BAR -->\n  <div class="stats">\n    <div class="stat">\n      <span class="stat-num" data-target="25">0</span>\n      <div class="stat-label">Years of Experience</div>\n    </div>\n    <div class="stat">\n      <span class="stat-num" data-target="1200">0</span>\n      <div class="stat-label">Wells Drilled</div>\n    </div>\n    <div class="stat">\n      <span class="stat-num" data-target="98">0</span>\n      <div class="stat-label">% Success Rate</div>\n    </div>\n    <div class="stat">\n      <span class="stat-num" data-target="24">0</span>\n      <div class="stat-label">Hr Emergency Response</div>\n    </div>\n  </div>\n\n  <!-- SERVICES -->\n  <section class="services" id="services">\n    <div class="section-eyebrow">What We Do</div>\n    <div class="section-title">Your Trusted Central Texas <span>Well Drilling Partner</span></div>\n    <p class="section-intro">We provide complete water well solutions for homeowners, farmers, and commercial operations across Central Texas. Every job is handled with the experience and care your property deserves.</p>\n\n    <div class="service-grid">\n\n      <!-- Residential -->\n      <div class="service-card">\n        <img class="service-img"\n          src="/assets/img/rig-desert.jpg"\n          alt="Residential water well drilling"\n          onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">\n        <div class="service-img-placeholder" style="display:none;">🏡</div>\n        <div class="service-body">\n          <h3>Domestic &amp; Residential Water Wells</h3>\n          <p>Clean, reliable water for your home. We site, drill, and case residential water wells to deliver consistent water pressure and quality for your household.</p>\n          <ul>\n            <li>New Well Drilling</li>\n            <li>Well Deepening</li>\n            <li>Well Rehabilitation</li>\n            <li>Decommissioning</li>\n          </ul>\n          <a href="#contact" class="service-link">Request a Quote →</a>\n        </div>\n      </div>\n\n      <!-- Agricultural -->\n      <div class="service-card">\n        <img class="service-img"\n          src="/assets/img/rig-field.jpg"\n          alt="Agricultural water well drilling"\n          onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">\n        <div class="service-img-placeholder" style="display:none;">🌾</div>\n        <div class="service-body">\n          <h3>Agricultural &amp; Irrigation Wells</h3>\n          <p>High-yield irrigation wells engineered for livestock operations, row crops, and large-scale Texas farming. We understand the water demands of working land.</p>\n          <ul>\n            <li>New High-Capacity Wells</li>\n            <li>Well Deepening &amp; Cleanouts</li>\n            <li>Pump &amp; Motor Upgrades</li>\n            <li>Decommissioning</li>\n          </ul>\n          <a href="#contact" class="service-link">Request a Quote →</a>\n        </div>\n      </div>\n\n      <!-- Commercial -->\n      <div class="service-card">\n        <img class="service-img"\n          src="/assets/img/rig-field.jpg"\n          alt="Commercial water well drilling rig"\n          onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">\n        <div class="service-img-placeholder" style="display:none;">🏗</div>\n        <div class="service-body">\n          <h3>Commercial &amp; Industrial Wells</h3>\n          <p>Reliable water supply for commercial developments, municipalities, and industrial operations. We bring the right equipment and experience for large-scale projects.</p>\n          <ul>\n            <li>New Commercial Wells</li>\n            <li>Municipal Supply Wells</li>\n            <li>Well Deepening</li>\n            <li>Flow &amp; Quality Testing</li>\n          </ul>\n          <a href="#contact" class="service-link">Request a Quote →</a>\n        </div>\n      </div>\n\n      <!-- Pump & Repair -->\n      <div class="service-card">\n        <img class="service-img"\n          src="/assets/img/rig-truck.jpg"\n          alt="Well pump installation and repair"\n          onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">\n        <div class="service-img-placeholder" style="display:none;">🔧</div>\n        <div class="service-body">\n          <h3>Pump Installation &amp; Well Repair</h3>\n          <p>Low flow, sediment, or equipment failure? We diagnose and restore your existing well. Submersible and jet pump systems installed right and built to last.</p>\n          <ul>\n            <li>Submersible Pump Installation</li>\n            <li>Pressure Tank Systems</li>\n            <li>Water Quality Testing</li>\n            <li>Permits &amp; State Compliance</li>\n          </ul>\n          <a href="#contact" class="service-link">Request a Quote →</a>\n        </div>\n      </div>\n\n    </div>\n  </section>\n\n  <!-- ABOUT -->\n  <section style="background: var(--white);" id="about">\n    <div class="about">\n\n      <div class="about-text">\n        <div class="section-eyebrow">About Our Company</div>\n        <h2 class="section-title">Locally Owned.<br><span>Texas Proud.</span></h2>\n        <p><strong>Motal Well Services</strong> is a locally owned company serving Central Texas and surrounding areas. We are committed to providing a quality product and professional service for every customer — from small residential wells to large commercial projects.</p>\n        <p>Our team of experienced drillers brings deep knowledge of Texas geology and groundwater. We take pride in protecting your water resource while delivering personalized, professional service from the first call to final handoff.</p>\n        <p>We handle all permits, filings, and inspections so you can stay focused on what matters most — your home, your farm, your business.</p>\n        <div class="assoc-logos">\n          <div class="assoc-badge">Texas LIC. Well Driller</div>\n          <div class="assoc-badge">Bonded &amp; Insured</div>\n          <div class="assoc-badge">TGPC Member</div>\n        </div>\n      </div>     \n     \n\n      <div class="about-img-wrap">\n        <img src="/assets/img/rig-truck.jpg" alt="Motal Well Services drilling rig at work" onerror="this.src=\'\'; this.style.background=\'var(--navy2)\';">\n        <div class="about-years">\n          <span class="num">25+</span>\n          <span class="lbl">Years of Experience</span>\n        </div>\n\n        \n\n      </div>\n\n\n\n\n\n    </div>\n  </section>\n\n  <!-- PHOTO STRIP -->\n  <div class="photo-strip">\n    <img src="/assets/img/rig-tower.jpg" alt="Water well drilling rig in Texas">\n    <div class="photo-strip-overlay">\n      <h2>Ready to Find <span>Your Water?</span></h2>\n      <p>Get straight answers and a fair price. No runaround — just results.</p>\n      <a href="#contact" class="btn-primary">Get a Free Quote Today</a>\n    </div>\n  </div>\n\n  <!-- PROCESS -->\n  <section class="process" id="process">\n    <div class="section-eyebrow">How It Works</div>\n    <div class="section-title" style="color:white;">From First Call to <span>Flowing Water.</span></div>\n    <p class="section-intro">Our streamlined process takes the stress out of getting a new well. Here\'s what to expect from start to finish.</p>\n    <div class="process-grid">\n      <div class="process-step">\n        <div class="process-num">01</div>\n        <h4>Site Assessment</h4>\n        <p>We evaluate your land, pull geological data, and identify the optimal drill location before any equipment is mobilized.</p>\n      </div>\n      <div class="process-step">\n        <div class="process-num">02</div>\n        <h4>Permitting</h4>\n        <p>Every Texas permit, state filing, and required inspection is handled by our team. You stay focused on your property.</p>\n      </div>\n      <div class="process-step">\n        <div class="process-num">03</div>\n        <h4>Drilling</h4>\n        <p>We bring modern rigs, experienced operators, and real-time formation logging to reach the best aquifer for your land.</p>\n      </div>\n      <div class="process-step">\n        <div class="process-num">04</div>\n        <h4>Testing &amp; Handoff</h4>\n        <p>Full yield and water quality testing, pump installation, and a reliable water source handed to you — ready to use.</p>\n      </div>\n    </div>\n  </section>\n\n  <!-- FAQ -->\n  <section class="faq" id="faq">\n    <div class="faq-header">\n      <div class="section-eyebrow">FAQ\'s</div>\n      <div class="section-title">Let\'s Talk About <span>Drilling</span></div>\n      <p class="section-intro" style="margin-bottom:0;">Over the years we\'ve been asked a lot of questions. Here are the most common ones about water well drilling in Central Texas.</p>\n    </div>\n    <div class="faq-grid">\n      <div class="faq-item">\n        <h4>How deep does the well need to be?</h4>\n        <p>Well depth varies based on your specific location, local geology, and how much water you need. Central Texas wells typically range from 200 to 600+ feet depending on the aquifer. We assess your land and geological data to recommend the right depth before drilling begins.</p>\n      </div>\n      <div class="faq-item">\n        <h4>How much does a new well cost?</h4>\n        <p>Costs depend on depth, soil and rock conditions, location, and any additional services like pump installation or water testing. We provide transparent, no-surprise quotes after evaluating your property. Every site is unique — we\'ll give you a fair price based on your actual conditions.</p>\n      </div>\n      <div class="faq-item">\n        <h4>Is well water safe to drink?</h4>\n        <p>Properly drilled and cased wells in Central Texas can provide clean, safe drinking water. We perform water quality testing after every new well to verify safety. Periodic re-testing is recommended, as groundwater quality can change over time.</p>\n      </div>\n      <div class="faq-item">\n        <h4>What equipment do you use?</h4>\n        <p>We operate modern rotary drill rigs capable of handling Texas\'s varied geology — from soft clay and caliche to hard limestone and granite. Our equipment is maintained to industry standards and operated by experienced, licensed Texas drillers.</p>\n      </div>\n      <div class="faq-item">\n        <h4>How long does it take to drill a well?</h4>\n        <p>Most residential wells can be drilled in 1–3 days, depending on depth and conditions. Agricultural and commercial projects may take longer. We\'ll give you a realistic timeline upfront and keep you updated throughout the job.</p>\n      </div>\n      <div class="faq-item">\n        <h4>Do you handle permits and inspections?</h4>\n        <p>Yes — we take care of all required Texas Water Well permits, groundwater conservation district filings, and any required inspections. You don\'t have to navigate state bureaucracy on your own.</p>\n      </div>\n    </div>\n  </section>\n\n  <!-- CONTACT -->\n  <section style="background: var(--white);" id="contact">\n    <div class="contact-section">\n      <div class="contact-info">\n        <div class="section-eyebrow">Get in Touch</div>\n        <h2 class="section-title">Ready to Get <span>Started?</span></h2>\n        <p>If you\'re considering a new well or need help with an existing one, we\'re here to help. Fill out the form and our team will get back to you with a quote and answers to your questions.</p>\n\n        <div class="contact-item">\n          <div class="contact-icon">📞</div>\n          <div class="contact-detail">\n            <strong>Phone</strong>\n            <a href="tel:5123508061">(512) 350-8061</a>\n          </div>\n        </div>\n        <div class="contact-item">\n          <div class="contact-icon">✉</div>\n          <div class="contact-detail">\n            <strong>Email</strong>\n            <a href="mailto:info@motalwellservices.com">info@motalwellservices.com</a>\n          </div>\n        </div>\n        <div class="contact-item">\n          <div class="contact-icon">📍</div>\n          <div class="contact-detail">\n            <strong>Service Area</strong>\n            Central Texas &amp; Surrounding Counties\n          </div>\n        </div>\n        <div class="contact-item">\n          <div class="contact-icon">🕐</div>\n          <div class="contact-detail">\n            <strong>Hours</strong>\n            Mon–Fri 7am–6pm · Sat 8am–2pm<br>Emergency Service Available 24/7\n          </div>\n        </div>\n      </div>\n\n      <section id="quoteForm2">\n<br/>\n      <div class="quote-form" >\n        <h3>Free Quote Request</h3>\n        <p class="form-sub">Fill out the form below and we\'ll respond as quickly as possible.</p>\n        <form id="quoteForm">\n          <div class="form-row">\n            <input type="text" id="field-name" name="name" placeholder="Full Name *" required>\n            <input type="tel" id="field-phone" name="phone" placeholder="Phone Number *" required>\n          </div>\n          <input type="email" id="field-email" name="email" placeholder="Email Address">\n          <input type="text" id="field-location" name="location" placeholder="Property Location / County">\n          <select id="field-service" name="service">\n            <option value="" disabled selected>Type of Service Needed</option>\n            <option>New Residential Well</option>\n            <option>New Agricultural / Irrigation Well</option>\n            <option>New Commercial Well</option>\n            <option>Well Deepening</option>\n            <option>Well Repair / Rehabilitation</option>\n            <option>Pump Installation</option>\n            <option>Water Testing</option>\n            <option>Well Decommissioning</option>\n            <option>Not Sure / Need Advice</option>\n          </select>\n          <textarea id="field-message" name="message" placeholder="Questions or additional details about your project..."></textarea>\n          <button type="submit" class="form-submit">Submit Request →</button>\n        </form>\n      </div>\n\n</section>\n\n    </div>\n  </section>\n\n  <!-- FOOTER -->\n  <footer>\n    <div class="logo">Motal <span>&nbsp;Well Services</span></div>\n    <div class="footer-copy">© 2025 Motal Well Services — All Rights Reserved</div>\n    <div class="footer-right">\n      <strong>Licensed Well Driller — Texas</strong>\n      (512) 350-8061 &nbsp;|&nbsp; Central Texas\n    </div>\n  </footer>\n\n  <!-- SUCCESS MODAL -->\n  <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-hidden="true">\n    <div class="modal">\n      <div class="modal-title">Request <span>Sent!</span></div>\n      <div class="modal-body">\n        Thanks for reaching out. Your request was received successfully. We\'ll review the details and get back to you as soon as possible.\n      </div>\n      <button class="modal-close" type="button" id="successModalClose">Close</button>\n    </div>\n  </div>';
+const stats = [
+  { target: 25, label: 'Years of Experience' },
+  { target: 1200, label: 'Wells Drilled' },
+  { target: 98, label: '% Success Rate' },
+  { target: 24, label: 'Hr Emergency Response' },
+];
 
-export default function Home() {
+const services = [
+  {
+    title: 'Domestic & Residential Water Wells',
+    description:
+      'Clean, reliable water for your home. We site, drill, and case residential water wells to deliver consistent water pressure and quality for your household.',
+    image: '/assets/img/rig-desert.jpg',
+    alt: 'Residential water well drilling',
+    fallback: '🏡',
+    features: ['New Well Drilling', 'Well Deepening', 'Well Rehabilitation', 'Decommissioning'],
+  },
+  {
+    title: 'Agricultural & Irrigation Wells',
+    description:
+      'High-yield irrigation wells engineered for livestock operations, row crops, and large-scale Texas farming. We understand the water demands of working land.',
+    image: '/assets/img/rig-field.jpg',
+    alt: 'Agricultural water well drilling',
+    fallback: '🌾',
+    features: ['New High-Capacity Wells', 'Well Deepening & Cleanouts', 'Pump & Motor Upgrades', 'Decommissioning'],
+  },
+  {
+    title: 'Commercial & Industrial Wells',
+    description:
+      'Reliable water supply for commercial developments, municipalities, and industrial operations. We bring the right equipment and experience for large-scale projects.',
+    image: '/assets/img/rig-field.jpg',
+    alt: 'Commercial water well drilling rig',
+    fallback: '🏗',
+    features: ['New Commercial Wells', 'Municipal Supply Wells', 'Well Deepening', 'Flow & Quality Testing'],
+  },
+  {
+    title: 'Pump Installation & Well Repair',
+    description:
+      'Low flow, sediment, or equipment failure? We diagnose and restore your existing well. Submersible and jet pump systems installed right and built to last.',
+    image: '/assets/img/rig-truck.jpg',
+    alt: 'Well pump installation and repair',
+    fallback: '🔧',
+    features: ['Submersible Pump Installation', 'Pressure Tank Systems', 'Water Quality Testing', 'Permits & State Compliance'],
+  },
+];
+
+const processSteps = [
+  {
+    number: '01',
+    title: 'Site Assessment',
+    description:
+      'We evaluate your land, pull geological data, and identify the optimal drill location before any equipment is mobilized.',
+  },
+  {
+    number: '02',
+    title: 'Permitting',
+    description:
+      'Every Texas permit, state filing, and required inspection is handled by our team. You stay focused on your property.',
+  },
+  {
+    number: '03',
+    title: 'Drilling',
+    description:
+      'We bring modern rigs, experienced operators, and real-time formation logging to reach the best aquifer for your land.',
+  },
+  {
+    number: '04',
+    title: 'Testing & Handoff',
+    description:
+      'Full yield and water quality testing, pump installation, and a reliable water source handed to you — ready to use.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'How deep does the well need to be?',
+    answer:
+      'Well depth varies based on your specific location, local geology, and how much water you need. Central Texas wells typically range from 200 to 600+ feet depending on the aquifer. We assess your land and geological data to recommend the right depth before drilling begins.',
+  },
+  {
+    question: 'How much does a new well cost?',
+    answer:
+      "Costs depend on depth, soil and rock conditions, location, and any additional services like pump installation or water testing. We provide transparent, no-surprise quotes after evaluating your property. Every site is unique — we'll give you a fair price based on your actual conditions.",
+  },
+  {
+    question: 'Is well water safe to drink?',
+    answer:
+      'Properly drilled and cased wells in Central Texas can provide clean, safe drinking water. We perform water quality testing after every new well to verify safety. Periodic re-testing is recommended, as groundwater quality can change over time.',
+  },
+  {
+    question: 'What equipment do you use?',
+    answer:
+      "We operate modern rotary drill rigs capable of handling Texas's varied geology — from soft clay and caliche to hard limestone and granite. Our equipment is maintained to industry standards and operated by experienced, licensed Texas drillers.",
+  },
+  {
+    question: 'How long does it take to drill a well?',
+    answer:
+      "Most residential wells can be drilled in 1–3 days, depending on depth and conditions. Agricultural and commercial projects may take longer. We'll give you a realistic timeline upfront and keep you updated throughout the job.",
+  },
+  {
+    question: 'Do you handle permits and inspections?',
+    answer:
+      "Yes — we take care of all required Texas Water Well permits, groundwater conservation district filings, and any required inspections. You don't have to navigate state bureaucracy on your own.",
+  },
+];
+
+function SiteImage({ src, alt, className, fallback }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError && fallback) {
+    return (
+      <div className="service-img-placeholder" style={{ display: 'flex' }}>
+        {fallback}
+      </div>
+    );
+  }
+
+  return <img className={className} src={src} alt={alt} onError={() => setHasError(true)} />;
+}
+
+function Header() {
+  return (
+    <>
+      <div className="topbar">
+        <span className="license-badge">Licensed &amp; Insured · Central Texas</span>
+        <div>
+          <a href="tel:5123508061">📞 (512) 350-8061</a>
+          <a href="mailto:info@motalwellservices.com">✉ info@motalwellservices.com</a>
+        </div>
+      </div>
+
+      <nav>
+        <div className="logo">
+          <div className="logo-icon">⛏</div>
+          Motal <span>&nbsp;Well Services</span>
+        </div>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#quoteForm2" className="nav-cta">Quote</a></li>
+        </ul>
+      </nav>
+    </>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="hero">
+      <div className="hero-bg" />
+      <div className="hero-overlay" />
+      <div className="hero-content">
+        <div className="hero-tag">Residential · Agricultural · Commercial</div>
+        <h1>
+          Professional.<br />Experienced.<br /><em>Knowledgeable.</em>
+        </h1>
+        <p>
+          Motal Well Services is a locally owned company serving Central Texas. We are committed to providing professional
+          water well drilling, pump installation, and well services for every customer.
+        </p>
+        <div className="hero-btns">
+          <a href="#services" className="btn-primary">Our Drilling Services</a>
+          <a href="#contact" className="btn-outline">Get a Free Quote</a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Stats() {
+  const containerRef = useRef(null);
+  const [values, setValues] = useState(stats.map(() => 0));
+
   useEffect(() => {
-    const cleanups = [];
-    const statEls = document.querySelectorAll('.stat-num');
-    const animationFrames = new Map();
+    const container = containerRef.current;
+    const animationFrames = [];
 
-    const animateStat = (el) => {
-      const priorFrame = animationFrames.get(el);
-      if (priorFrame) cancelAnimationFrame(priorFrame);
-
-      const target = Number.parseInt(el.dataset.target || '0', 10);
+    const animate = () => {
       const duration = 1000;
       const start = performance.now();
 
       const tick = (now) => {
         const progress = Math.min(1, (now - start) / duration);
         const eased = 1 - (1 - progress) * (1 - progress);
-        el.textContent = String(Math.floor(target * eased));
+        setValues(stats.map((stat) => Math.floor(stat.target * eased)));
 
-        if (progress < 1) {
-          animationFrames.set(el, requestAnimationFrame(tick));
-        } else {
-          el.textContent = String(target);
-        }
+        if (progress < 1) animationFrames.push(requestAnimationFrame(tick));
       };
 
-      animationFrames.set(el, requestAnimationFrame(tick));
+      animationFrames.push(requestAnimationFrame(tick));
     };
 
-    const stats = document.querySelector('.stats');
-    let statsObserver;
-    if (stats && 'IntersectionObserver' in window) {
-      statsObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) statEls.forEach(animateStat);
-        });
+    let observer;
+    if (container && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) animate();
       }, { threshold: 0.5 });
-      statsObserver.observe(stats);
+      observer.observe(container);
     } else {
-      statEls.forEach(animateStat);
+      animate();
     }
 
-    const modal = document.getElementById('successModal');
-    const closeButton = document.getElementById('successModalClose');
-    const openModal = () => {
-      if (!modal) return;
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-    };
-    const closeModal = () => {
-      if (!modal) return;
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
-    };
-    const handleModalClick = (event) => {
-      if (event.target === modal) closeModal();
-    };
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') closeModal();
-    };
-
-    closeButton?.addEventListener('click', closeModal);
-    modal?.addEventListener('click', handleModalClick);
-    document.addEventListener('keydown', handleKeyDown);
-    cleanups.push(() => closeButton?.removeEventListener('click', closeModal));
-    cleanups.push(() => modal?.removeEventListener('click', handleModalClick));
-    cleanups.push(() => document.removeEventListener('keydown', handleKeyDown));
-
-    const form = document.getElementById('quoteForm');
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      if (!(form instanceof HTMLFormElement)) return;
-
-      const button = form.querySelector('button[type="submit"]');
-      const originalText = button?.textContent || 'Submit';
-      if (button) {
-        button.disabled = true;
-        button.textContent = 'Sending…';
-      }
-
-      try {
-        if (!window.emailjs) throw new Error('EmailJS is not available.');
-        await window.emailjs.send('service_6lrjbde', 'template_4yxabjd', {
-          from_name: document.getElementById('field-name')?.value || '',
-          phone: document.getElementById('field-phone')?.value || '',
-          reply_to: document.getElementById('field-email')?.value || '',
-          location: document.getElementById('field-location')?.value || '',
-          message: document.getElementById('field-message')?.value || '',
-        });
-        form.reset();
-        openModal();
-      } catch (error) {
-        window.alert('There was an issue sending your request. Please call us directly at (512) 350-8061.');
-        console.error('EmailJS error:', error);
-      } finally {
-        if (button) {
-          button.disabled = false;
-          button.textContent = originalText;
-        }
-      }
-    };
-
-    form?.addEventListener('submit', handleSubmit);
-    cleanups.push(() => form?.removeEventListener('submit', handleSubmit));
-
     return () => {
-      statsObserver?.disconnect();
+      observer?.disconnect();
       animationFrames.forEach(cancelAnimationFrame);
-      cleanups.forEach((cleanup) => cleanup());
     };
   }, []);
+
+  return (
+    <div className="stats" ref={containerRef}>
+      {stats.map((stat, index) => (
+        <div className="stat" key={stat.label}>
+          <span className="stat-num" data-target={stat.target}>{values[index]}</span>
+          <div className="stat-label">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Services() {
+  return (
+    <section className="services" id="services">
+      <div className="section-eyebrow">What We Do</div>
+      <div className="section-title">Your Trusted Central Texas <span>Well Drilling Partner</span></div>
+      <p className="section-intro">
+        We provide complete water well solutions for homeowners, farmers, and commercial operations across Central Texas.
+        Every job is handled with the experience and care your property deserves.
+      </p>
+
+      <div className="service-grid">
+        {services.map((service) => (
+          <div className="service-card" key={service.title}>
+            <SiteImage src={service.image} alt={service.alt} className="service-img" fallback={service.fallback} />
+            <div className="service-body">
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+              <ul>
+                {service.features.map((feature) => <li key={feature}>{feature}</li>)}
+              </ul>
+              <a href="#contact" className="service-link">Request a Quote →</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function About() {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <section style={{ background: 'var(--white)' }} id="about">
+      <div className="about">
+        <div className="about-text">
+          <div className="section-eyebrow">About Our Company</div>
+          <h2 className="section-title">Locally Owned.<br /><span>Texas Proud.</span></h2>
+          <p><strong>Motal Well Services</strong> is a locally owned company serving Central Texas and surrounding areas. We are committed to providing a quality product and professional service for every customer — from small residential wells to large commercial projects.</p>
+          <p>Our team of experienced drillers brings deep knowledge of Texas geology and groundwater. We take pride in protecting your water resource while delivering personalized, professional service from the first call to final handoff.</p>
+          <p>We handle all permits, filings, and inspections so you can stay focused on what matters most — your home, your farm, your business.</p>
+          <div className="assoc-logos">
+            <div className="assoc-badge">Texas LIC. Well Driller</div>
+            <div className="assoc-badge">Bonded &amp; Insured</div>
+            <div className="assoc-badge">TGPC Member</div>
+          </div>
+        </div>
+
+        <div className="about-img-wrap">
+          <img
+            src={imageError ? undefined : '/assets/img/rig-truck.jpg'}
+            alt="Motal Well Services drilling rig at work"
+            onError={() => setImageError(true)}
+            style={imageError ? { background: 'var(--navy2)' } : undefined}
+          />
+          <div className="about-years">
+            <span className="num">25+</span>
+            <span className="lbl">Years of Experience</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PhotoStrip() {
+  return (
+    <div className="photo-strip">
+      <img src="/assets/img/rig-tower.jpg" alt="Water well drilling rig in Texas" />
+      <div className="photo-strip-overlay">
+        <h2>Ready to Find <span>Your Water?</span></h2>
+        <p>Get straight answers and a fair price. No runaround — just results.</p>
+        <a href="#contact" className="btn-primary">Get a Free Quote Today</a>
+      </div>
+    </div>
+  );
+}
+
+function Process() {
+  return (
+    <section className="process" id="process">
+      <div className="section-eyebrow">How It Works</div>
+      <div className="section-title" style={{ color: 'white' }}>From First Call to <span>Flowing Water.</span></div>
+      <p className="section-intro">Our streamlined process takes the stress out of getting a new well. Here&apos;s what to expect from start to finish.</p>
+      <div className="process-grid">
+        {processSteps.map((step) => (
+          <div className="process-step" key={step.number}>
+            <div className="process-num">{step.number}</div>
+            <h4>{step.title}</h4>
+            <p>{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FAQ() {
+  return (
+    <section className="faq" id="faq">
+      <div className="faq-header">
+        <div className="section-eyebrow">FAQ&apos;s</div>
+        <div className="section-title">Let&apos;s Talk About <span>Drilling</span></div>
+        <p className="section-intro" style={{ marginBottom: 0 }}>Over the years we&apos;ve been asked a lot of questions. Here are the most common ones about water well drilling in Central Texas.</p>
+      </div>
+      <div className="faq-grid">
+        {faqs.map((faq) => (
+          <div className="faq-item" key={faq.question}>
+            <h4>{faq.question}</h4>
+            <p>{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function QuoteForm({ onSuccess }) {
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setIsSending(true);
+
+    try {
+      if (!window.emailjs) throw new Error('EmailJS is not available.');
+      const formData = new FormData(form);
+      await window.emailjs.send('service_6lrjbde', 'template_4yxabjd', {
+        from_name: formData.get('name') || '',
+        phone: formData.get('phone') || '',
+        reply_to: formData.get('email') || '',
+        location: formData.get('location') || '',
+        message: formData.get('message') || '',
+      });
+      form.reset();
+      onSuccess();
+    } catch (error) {
+      window.alert('There was an issue sending your request. Please call us directly at (512) 350-8061.');
+      console.error('EmailJS error:', error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <section id="quoteForm2">
+      <br />
+      <div className="quote-form">
+        <h3>Free Quote Request</h3>
+        <p className="form-sub">Fill out the form below and we&apos;ll respond as quickly as possible.</p>
+        <form id="quoteForm" onSubmit={handleSubmit}>
+          <div className="form-row">
+            <input type="text" id="field-name" name="name" placeholder="Full Name *" required />
+            <input type="tel" id="field-phone" name="phone" placeholder="Phone Number *" required />
+          </div>
+          <input type="email" id="field-email" name="email" placeholder="Email Address" />
+          <input type="text" id="field-location" name="location" placeholder="Property Location / County" />
+          <select id="field-service" name="service" defaultValue="">
+            <option value="" disabled>Type of Service Needed</option>
+            <option>New Residential Well</option>
+            <option>New Agricultural / Irrigation Well</option>
+            <option>New Commercial Well</option>
+            <option>Well Deepening</option>
+            <option>Well Repair / Rehabilitation</option>
+            <option>Pump Installation</option>
+            <option>Water Testing</option>
+            <option>Well Decommissioning</option>
+            <option>Not Sure / Need Advice</option>
+          </select>
+          <textarea id="field-message" name="message" placeholder="Questions or additional details about your project..." />
+          <button type="submit" className="form-submit" disabled={isSending}>
+            {isSending ? 'Sending…' : 'Submit Request →'}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
+function Contact({ onSuccess }) {
+  return (
+    <section style={{ background: 'var(--white)' }} id="contact">
+      <div className="contact-section">
+        <div className="contact-info">
+          <div className="section-eyebrow">Get in Touch</div>
+          <h2 className="section-title">Ready to Get <span>Started?</span></h2>
+          <p>If you&apos;re considering a new well or need help with an existing one, we&apos;re here to help. Fill out the form and our team will get back to you with a quote and answers to your questions.</p>
+
+          <div className="contact-item">
+            <div className="contact-icon">📞</div>
+            <div className="contact-detail"><strong>Phone</strong><a href="tel:5123508061">(512) 350-8061</a></div>
+          </div>
+          <div className="contact-item">
+            <div className="contact-icon">✉</div>
+            <div className="contact-detail"><strong>Email</strong><a href="mailto:info@motalwellservices.com">info@motalwellservices.com</a></div>
+          </div>
+          <div className="contact-item">
+            <div className="contact-icon">📍</div>
+            <div className="contact-detail"><strong>Service Area</strong>Central Texas &amp; Surrounding Counties</div>
+          </div>
+          <div className="contact-item">
+            <div className="contact-icon">🕐</div>
+            <div className="contact-detail"><strong>Hours</strong>Mon–Fri 7am–6pm · Sat 8am–2pm<br />Emergency Service Available 24/7</div>
+          </div>
+        </div>
+
+        <QuoteForm onSuccess={onSuccess} />
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer>
+      <div className="logo">Motal <span>&nbsp;Well Services</span></div>
+      <div className="footer-copy">© 2025 Motal Well Services — All Rights Reserved</div>
+      <div className="footer-right"><strong>Licensed Well Driller — Texas</strong>(512) 350-8061 &nbsp;|&nbsp; Central Texas</div>
+    </footer>
+  );
+}
+
+function SuccessModal({ isOpen, onClose }) {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div
+      className={`modal-backdrop${isOpen ? ' is-open' : ''}`}
+      id="successModal"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden={!isOpen}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="modal">
+        <div className="modal-title">Request <span>Sent!</span></div>
+        <div className="modal-body">Thanks for reaching out. Your request was received successfully. We&apos;ll review the details and get back to you as soon as possible.</div>
+        <button className="modal-close" type="button" id="successModalClose" onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
@@ -124,7 +489,19 @@ export default function Home() {
         strategy="afterInteractive"
         onLoad={() => window.emailjs?.init({ publicKey: 'TLG4XlbbLRVHddY_I' })}
       />
-      <main dangerouslySetInnerHTML={{ __html: pageMarkup }} />
+      <main>
+        <Header />
+        <Hero />
+        <Stats />
+        <Services />
+        <About />
+        <PhotoStrip />
+        <Process />
+        <FAQ />
+        <Contact onSuccess={() => setIsModalOpen(true)} />
+        <Footer />
+        <SuccessModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      </main>
     </>
   );
 }
