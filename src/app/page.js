@@ -14,6 +14,7 @@ import Services from '../components/Services';
 import Stats from '../components/Stats';
 import SuccessModal from '../components/SuccessModal';
 
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
