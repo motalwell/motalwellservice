@@ -1,9 +1,6 @@
 import QuoteRequest from './QuoteRequest';
-import { siteContent } from '../content/siteContent';
 
-const { company } = siteContent;
-
-function ContactDetail({ item }) {
+function ContactDetail({ company, item }) {
   if (item.type === 'phone') {
     return <a href={`tel:${company.phoneLink}`}>{company.phoneDisplay}</a>;
   }
@@ -19,9 +16,7 @@ function ContactDetail({ item }) {
   return item.value;
 }
 
-export default function Contact() {
-  const { contact } = siteContent;
-
+export default function Contact({ company, contact, quoteForm, successModal }) {
   return (
     <section style={{ background: 'var(--white)' }} id="contact">
       <div className="contact-section">
@@ -35,13 +30,13 @@ export default function Contact() {
               <div className="contact-icon">{item.icon}</div>
               <div className="contact-detail">
                 <strong>{item.label}</strong>
-                <ContactDetail item={item} />
+                <ContactDetail company={company} item={item} />
               </div>
             </div>
           ))}
         </div>
 
-        <QuoteRequest />
+        <QuoteRequest quoteForm={quoteForm} successModal={successModal} />
       </div>
     </section>
   );

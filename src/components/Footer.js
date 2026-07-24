@@ -1,10 +1,4 @@
-import { siteContent } from '../content/siteContent';
-
-const { company } = siteContent;
-
-export default function Footer() {
-  const { footer } = siteContent;
-
+export default function Footer({ company, footer }) {
   return (
     <footer>
       <div className="logo">{company.logoPrimary} <span>&nbsp;{company.logoSecondary}</span></div>

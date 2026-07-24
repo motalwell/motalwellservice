@@ -1,8 +1,6 @@
 import SiteImage from './SiteImage';
-import { siteContent } from '../content/siteContent';
 
-export default function About() {
-  const { about } = siteContent;
+export default function About({ about }) {
 
   return (
     <section style={{ background: 'var(--white)' }} id="about">

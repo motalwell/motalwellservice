@@ -1,7 +1,4 @@
-import { siteContent } from '../content/siteContent';
-
-export default function Process() {
-  const { process } = siteContent;
+export default function Process({ process }) {
 
   return (
     <section className="process" id="process">

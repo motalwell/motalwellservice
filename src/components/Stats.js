@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { siteContent } from '../content/siteContent';
 
-export default function Stats() {
-  const { stats } = siteContent;
+export default function Stats({ stats }) {
   const containerRef = useRef(null);
   const [values, setValues] = useState(stats.map(() => 0));
 

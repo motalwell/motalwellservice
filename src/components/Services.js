@@ -1,8 +1,6 @@
 import SiteImage from './SiteImage';
-import { siteContent } from '../content/siteContent';
 
-export default function Services() {
-  const { servicesSection, services } = siteContent;
+export default function Services({ servicesSection, services }) {
 
   return (
     <section className="services" id="services">

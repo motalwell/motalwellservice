@@ -1,8 +1,4 @@
-import { siteContent } from '../content/siteContent';
-
-const { company } = siteContent;
-
-function Logo() {
+function Logo({ company }) {
   return (
     <div className="logo">
       <div className="logo-icon">{company.logoIcon}</div>
@@ -11,7 +7,7 @@ function Logo() {
   );
 }
 
-export default function Header() {
+export default function Header({ company, navigation }) {
   return (
     <>
       <div className="topbar">
@@ -23,9 +19,9 @@ export default function Header() {
       </div>
 
       <nav>
-        <Logo />
+        <Logo company={company} />
         <ul>
-          {siteContent.navigation.map((item) => (
+          {navigation.map((item) => (
             <li key={item.href}>
               <a href={item.href} className={item.isCta ? 'nav-cta' : undefined}>
                 {item.label}

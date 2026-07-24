@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { siteContent } from '../content/siteContent';
 
-export default function SuccessModal({ isOpen, onClose }) {
-  const { successModal } = siteContent;
+export default function SuccessModal({ successModal, isOpen, onClose }) {
 
   useEffect(() => {
     const handleKeyDown = (event) => {

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import QuoteForm from './QuoteForm';
 import SuccessModal from './SuccessModal';
 
-export default function QuoteRequest() {
+export default function QuoteRequest({ quoteForm, successModal }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -15,8 +15,12 @@ export default function QuoteRequest() {
         strategy="afterInteractive"
         onLoad={() => window.emailjs?.init({ publicKey: 'TLG4XlbbLRVHddY_I' })}
       />
-      <QuoteForm onSuccess={() => setIsModalOpen(true)} />
-      <SuccessModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <QuoteForm quoteForm={quoteForm} onSuccess={() => setIsModalOpen(true)} />
+      <SuccessModal
+        successModal={successModal}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 }

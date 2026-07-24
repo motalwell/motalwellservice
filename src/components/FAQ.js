@@ -1,7 +1,4 @@
-import { siteContent } from '../content/siteContent';
-
-export default function FAQ() {
-  const { faq } = siteContent;
+export default function FAQ({ faq }) {
 
   return (
     <section className="faq" id="faq">

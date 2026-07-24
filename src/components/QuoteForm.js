@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { siteContent } from '../content/siteContent';
 
-export default function QuoteForm({ onSuccess }) {
-  const { quoteForm } = siteContent;
+export default function QuoteForm({ quoteForm, onSuccess }) {
   const [isSending, setIsSending] = useState(false);
 
   const handleSubmit = async (event) => {

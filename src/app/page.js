@@ -8,20 +8,28 @@ import PhotoStrip from '../components/PhotoStrip';
 import Process from '../components/Process';
 import Services from '../components/Services';
 import Stats from '../components/Stats';
+import { getSiteContent } from '../data/getSiteContent';
 
-export default function Home() {
+export default async function Home() {
+  const content = await getSiteContent();
+
   return (
     <main>
-      <Header />
-      <Hero />
-      <Stats />
-      <Services />
-      <About />
-      <PhotoStrip />
-      <Process />
-      <FAQ />
-      <Contact />
-      <Footer />
+      <Header company={content.company} navigation={content.navigation} />
+      <Hero hero={content.hero} />
+      <Stats stats={content.stats} />
+      <Services servicesSection={content.servicesSection} services={content.services} />
+      <About about={content.about} />
+      <PhotoStrip photoCallout={content.photoCallout} />
+      <Process process={content.process} />
+      <FAQ faq={content.faq} />
+      <Contact
+        company={content.company}
+        contact={content.contact}
+        quoteForm={content.quoteForm}
+        successModal={content.successModal}
+      />
+      <Footer company={content.company} footer={content.footer} />
     </main>
   );
 }

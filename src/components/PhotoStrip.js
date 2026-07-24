@@ -1,9 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { siteContent } from '../content/siteContent';
-
-export default function PhotoStrip() {
-  const { photoCallout } = siteContent;
+export default function PhotoStrip({ photoCallout }) {
 
   return (
     <div className="photo-strip">

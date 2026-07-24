@@ -1,7 +1,4 @@
-import { siteContent } from '../content/siteContent';
-
-export default function Hero() {
-  const { hero } = siteContent;
+export default function Hero({ hero }) {
 
   return (
     <section className="hero" style={{ '--hero-image': `url("${hero.image}")` }}>
