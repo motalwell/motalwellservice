@@ -18,6 +18,7 @@ export default function QuoteForm({ quoteForm, onSuccess }) {
         phone: formData.get('phone') || '',
         reply_to: formData.get('email') || '',
         location: formData.get('location') || '',
+        service: formData.get('service') || '',
         message: formData.get('message') || '',
       });
       form.reset();
