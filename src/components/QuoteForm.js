@@ -2,6 +2,27 @@
 
 import { useState } from 'react';
 
+function formatPhoneNumber(value) {
+  let digits = String(value ?? '').replace(/\D/g, '');
+
+  // Accept a pasted US number with a leading country code.
+  if (digits.length === 11 && digits.startsWith('1')) {
+    digits = digits.slice(1);
+  }
+
+  digits = digits.slice(0, 10);
+
+  if (digits.length < 4) {
+    return digits ? `(${digits}` : '';
+  }
+
+  if (digits.length < 7) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 export default function QuoteForm({ quoteForm, onSuccess }) {
   const [isSending, setIsSending] = useState(false);
 
@@ -64,9 +85,29 @@ export default function QuoteForm({ quoteForm, onSuccess }) {
           </div>
           <div className="form-row">
             <input type="text" id="field-name" name="name" placeholder={quoteForm.fields.name} required />
-            <input type="tel" id="field-phone" name="phone" placeholder={quoteForm.fields.phone} required />
+            <input
+              type="tel"
+              id="field-phone"
+              name="phone"
+              placeholder={quoteForm.fields.phone}
+              inputMode="numeric"
+              autoComplete="tel"
+              maxLength={14}
+              pattern="\([0-9]{3}\) [0-9]{3}-[0-9]{4}"
+              title="Enter a 10-digit phone number."
+              onInput={(event) => {
+                event.currentTarget.value = formatPhoneNumber(event.currentTarget.value);
+              }}
+              required
+            />
           </div>
-          <input type="email" id="field-email" name="email" placeholder={quoteForm.fields.email} />
+          <input
+            type="email"
+            id="field-email"
+            name="email"
+            placeholder={`${quoteForm.fields.email} (Optional)`}
+            autoComplete="email"
+          />
           <input type="text" id="field-location" name="location" placeholder={quoteForm.fields.location} />
           <select id="field-service" name="service" defaultValue="">
             <option value="" disabled>{quoteForm.fields.service}</option>

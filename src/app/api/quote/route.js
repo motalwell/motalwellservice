@@ -19,6 +19,20 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function normalizePhone(value) {
+  let digits = String(value ?? '').replace(/\D/g, '');
+
+  if (digits.length === 11 && digits.startsWith('1')) {
+    digits = digits.slice(1);
+  }
+
+  if (digits.length !== 10) {
+    return null;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -108,6 +122,15 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+
+    const formattedPhone = normalizePhone(fields.phone);
+    if (!formattedPhone) {
+      return Response.json(
+        { error: 'Please enter a valid 10-digit phone number.' },
+        { status: 400 }
+      );
+    }
+    fields.phone = formattedPhone;
 
     if (fields.email && !isValidEmail(fields.email)) {
       return Response.json(
