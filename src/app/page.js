@@ -10,6 +10,8 @@ import Services from '../components/Services';
 import Stats from '../components/Stats';
 import { getSiteContent } from '../data/getSiteContent';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const content = await getSiteContent();
 

@@ -14,7 +14,7 @@ export default function Header({ company, navigation }) {
         <span className="license-badge">{company.licenseBadge}</span>
         <div>
           <a href={`tel:${company.phoneLink}`}>📞 {company.phoneDisplay}</a>
-          <a href={`mailto:${company.email}`}>✉ 111{company.email}</a>
+          <a href={`mailto:${company.email}`}>✉ {company.email}</a>
         </div>
       </div>
 

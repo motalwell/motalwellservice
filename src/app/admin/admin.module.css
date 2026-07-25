@@ -1,0 +1,89 @@
+.page {
+  min-height: 100vh;
+  background: #f3f5f6;
+  padding: 48px 20px;
+  color: #172938;
+}
+
+.shell {
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.shell h1 {
+  margin: 0 0 24px;
+  font-family: Arial, sans-serif;
+  font-size: 30px;
+}
+
+.card {
+  background: white;
+  border-top: 4px solid #e56b1f;
+  padding: 28px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .08);
+}
+
+.card h2 {
+  margin: 0 0 22px;
+  font-family: Arial, sans-serif;
+  font-size: 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.card label {
+  display: block;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.card input {
+  width: 100%;
+  margin-top: 7px;
+  padding: 11px 12px;
+  border: 1px solid #cbd2d7;
+  font: inherit;
+  font-weight: 400;
+}
+
+.card button {
+  margin-top: 22px;
+  padding: 11px 28px;
+  border: 0;
+  background: #e56b1f;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.card button:disabled {
+  opacity: .65;
+  cursor: default;
+}
+
+.actions {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.success,
+.error {
+  margin: 14px 0 0;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.success { color: #26733c; }
+.error { color: #a52828; }
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+  .card { padding: 22px; }
+}
