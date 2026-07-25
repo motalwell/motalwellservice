@@ -201,3 +201,11 @@
 .card input[type='number'] {
   appearance: textfield;
 }
+
+.status {
+  position: sticky;
+  top: 68px;
+  z-index: 4;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .1);
+}

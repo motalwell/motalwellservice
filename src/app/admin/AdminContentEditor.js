@@ -68,6 +68,7 @@ export default function AdminContentEditor() {
   const [serviceInputKey, setServiceInputKey] = useState(0);
   const [activeSection, setActiveSection] = useState('company');
   const [message, setMessage] = useState('');
+  const [progress, setProgress] = useState('');
   const [working, setWorking] = useState('');
 
   useEffect(() => () => {
@@ -280,8 +281,19 @@ export default function AdminContentEditor() {
     });
   }
 
+  async function fetchWithTimeout(url, options, timeoutMs = 90000) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   async function saveSections(updates) {
-    const response = await fetch('/api/settings', {
+    const response = await fetchWithTimeout('/api/settings', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -308,7 +320,7 @@ export default function AdminContentEditor() {
       // Smaller images use the simpler server upload path. This avoids the
       // browser-to-Blob token flow that was stalling in production.
       if (file.size <= SERVER_UPLOAD_LIMIT) {
-        const response = await fetch(`/api/blob?pathname=${encodeURIComponent(pathname)}`, {
+        const response = await fetchWithTimeout(`/api/blob?pathname=${encodeURIComponent(pathname)}`, {
           method: 'POST',
           headers: {
             'Content-Type': file.type || 'application/octet-stream',
@@ -326,12 +338,17 @@ export default function AdminContentEditor() {
 
       // Images between 4 MB and 6 MB upload directly to Blob so they do not
       // exceed Vercel's request-body limit for Functions.
-      return await upload(pathname, file, {
-        access: 'public',
-        handleUploadUrl: '/api/blob',
-        clientPayload: JSON.stringify({ password }),
-        multipart: true,
-      });
+      return await Promise.race([
+        upload(pathname, file, {
+          access: 'public',
+          handleUploadUrl: '/api/blob',
+          clientPayload: JSON.stringify({ password }),
+          multipart: true,
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('The image upload timed out. Please try again.')), 90000)
+        ),
+      ]);
     } catch (error) {
       throw new Error(error?.message || 'Unable to upload the image.');
     }
@@ -341,7 +358,7 @@ export default function AdminContentEditor() {
     if (!url?.includes('.public.blob.vercel-storage.com')) return;
 
     try {
-      await fetch('/api/blob', {
+      await fetchWithTimeout('/api/blob', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -374,6 +391,7 @@ export default function AdminContentEditor() {
   async function saveImageSection(section, data, file, setter, setSaved, clearFile, clearPreview, resetInput) {
     setWorking(section);
     setMessage('');
+    setProgress(file ? 'Uploading image...' : 'Saving changes...');
 
     let uploadedUrl = '';
 
@@ -385,6 +403,7 @@ export default function AdminContentEditor() {
         const { url } = await uploadImage(section, file);
         uploadedUrl = url;
         nextData = { ...data, image: { ...data.image, url } };
+        setProgress('Saving changes...');
       }
 
       await saveSection(section, nextData);
@@ -396,16 +415,21 @@ export default function AdminContentEditor() {
       resetInput((current) => current + 1);
       const label = section === 'hero' ? 'Hero' : section === 'about' ? 'About' : 'Photo Callout';
       setMessage(`${label} saved.`);
+      setProgress('');
+      setWorking('');
 
+      // Cleanup is secondary. Do not make the successful save wait for it.
       if (file && oldUrl !== nextData.image.url) {
-        await deleteOldImage(oldUrl);
+        void deleteOldImage(oldUrl);
       }
     } catch (error) {
-      if (uploadedUrl) await deleteOldImage(uploadedUrl);
-      setMessage(error.message);
-    }
+      setProgress('');
+      setWorking('');
+      setMessage(error.name === 'AbortError' ? 'The request timed out. Please try again.' : error.message);
 
-    setWorking('');
+      // If the database save failed, remove the unused upload without delaying the error message.
+      if (uploadedUrl) void deleteOldImage(uploadedUrl);
+    }
   }
 
 
@@ -430,6 +454,7 @@ export default function AdminContentEditor() {
     event.preventDefault();
     setWorking('services');
     setMessage('');
+    setProgress(Object.keys(serviceFiles).length ? 'Uploading images...' : 'Saving changes...');
 
     const uploadedUrls = [];
 
@@ -451,6 +476,7 @@ export default function AdminContentEditor() {
         );
       }
 
+      setProgress('Saving changes...');
       await saveSections({ servicesSection, services: nextServices });
 
       setServices(nextServices);
@@ -461,17 +487,19 @@ export default function AdminContentEditor() {
       setServicePreviews({});
       setServiceInputKey((current) => current + 1);
       setMessage('Services saved.');
+      setProgress('');
+      setWorking('');
 
-      for (const url of oldUrls) {
-        await deleteOldImage(url);
-      }
+      // Cleanup is secondary and should never hold the Save button open.
+      oldUrls.forEach((url) => void deleteOldImage(url));
     } catch (error) {
-      for (const url of uploadedUrls) await deleteOldImage(url);
-      setMessage(error.message);
+      setProgress('');
+      setWorking('');
+      setMessage(error.name === 'AbortError' ? 'The request timed out. Please try again.' : error.message);
+      uploadedUrls.forEach((url) => void deleteOldImage(url));
     }
-
-    setWorking('');
   }
+
 
   async function saveContact(event) {
     event.preventDefault();
@@ -537,9 +565,9 @@ export default function AdminContentEditor() {
         ))}
       </nav>
 
-      {message && (
-        <p className={/^(Unable|Incorrect|Image|Choose)/.test(message) ? styles.error : styles.notice}>
-          {message}
+      {(progress || message) && (
+        <p className={`${styles.status} ${message && /^(Unable|Incorrect|Image|Choose|The request|The image)/.test(message) ? styles.error : styles.notice}`}>
+          {progress || message}
         </p>
       )}
 
@@ -643,7 +671,7 @@ export default function AdminContentEditor() {
         />
 
         <button type="submit" disabled={!heroChanged || working === 'hero'}>
-          {working === 'hero' ? 'Saving...' : 'Save Hero'}
+          {working === 'hero' ? progress || 'Saving...' : 'Save Hero'}
         </button>
       </form>
 
@@ -822,7 +850,7 @@ export default function AdminContentEditor() {
         ))}
 
         <button type="submit" disabled={!servicesChanged || working === 'services'}>
-          {working === 'services' ? 'Saving...' : 'Save Services'}
+          {working === 'services' ? progress || 'Saving...' : 'Save Services'}
         </button>
       </form>
       <form
@@ -894,7 +922,7 @@ export default function AdminContentEditor() {
         />
 
         <button type="submit" disabled={!aboutChanged || working === 'about'}>
-          {working === 'about' ? 'Saving...' : 'Save About'}
+          {working === 'about' ? progress || 'Saving...' : 'Save About'}
         </button>
       </form>
 
@@ -949,7 +977,7 @@ export default function AdminContentEditor() {
         />
 
         <button type="submit" disabled={!photoCalloutChanged || working === 'photoCallout'}>
-          {working === 'photoCallout' ? 'Saving...' : 'Save Photo Callout'}
+          {working === 'photoCallout' ? progress || 'Saving...' : 'Save Photo Callout'}
         </button>
       </form>
 
