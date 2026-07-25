@@ -27,15 +27,22 @@ export default function AdminContentEditor() {
   const [company, setCompany] = useState(null);
   const [hero, setHero] = useState(null);
   const [about, setAbout] = useState(null);
+  const [servicesSection, setServicesSection] = useState(null);
+  const [services, setServices] = useState(null);
   const [savedCompany, setSavedCompany] = useState('');
   const [savedHero, setSavedHero] = useState('');
   const [savedAbout, setSavedAbout] = useState('');
+  const [savedServicesSection, setSavedServicesSection] = useState('');
+  const [savedServices, setSavedServices] = useState('');
   const [heroFile, setHeroFile] = useState(null);
   const [aboutFile, setAboutFile] = useState(null);
+  const [serviceFiles, setServiceFiles] = useState({});
   const [heroPreview, setHeroPreview] = useState('');
   const [aboutPreview, setAboutPreview] = useState('');
+  const [servicePreviews, setServicePreviews] = useState({});
   const [heroInputKey, setHeroInputKey] = useState(0);
   const [aboutInputKey, setAboutInputKey] = useState(0);
+  const [serviceInputKey, setServiceInputKey] = useState(0);
   const [activeSection, setActiveSection] = useState('company');
   const [message, setMessage] = useState('');
   const [working, setWorking] = useState('');
@@ -72,6 +79,13 @@ export default function AdminContentEditor() {
     () => changed(about, savedAbout, aboutFile),
     [about, savedAbout, aboutFile]
   );
+  const servicesChanged = useMemo(
+    () =>
+      JSON.stringify(servicesSection) !== savedServicesSection ||
+      JSON.stringify(services) !== savedServices ||
+      Object.keys(serviceFiles).length > 0,
+    [servicesSection, services, savedServicesSection, savedServices, serviceFiles]
+  );
 
   async function openAdmin(event) {
     event.preventDefault();
@@ -92,9 +106,13 @@ export default function AdminContentEditor() {
     setCompany(data.company);
     setHero(data.hero);
     setAbout(data.about);
+    setServicesSection(data.servicesSection);
+    setServices(data.services);
     setSavedCompany(JSON.stringify(data.company));
     setSavedHero(JSON.stringify(data.hero));
     setSavedAbout(JSON.stringify(data.about));
+    setSavedServicesSection(JSON.stringify(data.servicesSection));
+    setSavedServices(JSON.stringify(data.services));
     setWorking('');
   }
 
@@ -136,6 +154,35 @@ export default function AdminContentEditor() {
 
     setFile(file);
     setPreview(file ? URL.createObjectURL(file) : '');
+  }
+
+  function chooseServiceImage(event, serviceId) {
+    const file = event.target.files?.[0] ?? null;
+    setMessage('');
+
+    if (servicePreviews[serviceId]) {
+      URL.revokeObjectURL(servicePreviews[serviceId]);
+    }
+
+    if (file && file.size > MAX_IMAGE_SIZE) {
+      event.target.value = '';
+      setMessage('Image must be 4 MB or smaller.');
+      return;
+    }
+
+    setServiceFiles((current) => {
+      const next = { ...current };
+      if (file) next[serviceId] = file;
+      else delete next[serviceId];
+      return next;
+    });
+
+    setServicePreviews((current) => {
+      const next = { ...current };
+      if (file) next[serviceId] = URL.createObjectURL(file);
+      else delete next[serviceId];
+      return next;
+    });
   }
 
   async function saveSection(section, data) {
@@ -231,7 +278,52 @@ export default function AdminContentEditor() {
     setWorking('');
   }
 
-  if (!company || !hero || !about) {
+
+  async function saveServices(event) {
+    event.preventDefault();
+    setWorking('services');
+    setMessage('');
+
+    try {
+      let nextServices = services;
+      const oldUrls = [];
+
+      for (const [serviceId, file] of Object.entries(serviceFiles)) {
+        const index = nextServices.findIndex((service) => String(service.id) === serviceId);
+        if (index === -1) continue;
+
+        const { url } = await uploadImage(`services-${serviceId}`, file);
+        oldUrls.push(nextServices[index].image?.url);
+        nextServices = nextServices.map((service, serviceIndex) =>
+          serviceIndex === index
+            ? { ...service, image: { ...service.image, url } }
+            : service
+        );
+      }
+
+      const sectionSaved = await saveSection('servicesSection', servicesSection);
+      const servicesSaved = await saveSection('services', nextServices);
+      if (!sectionSaved || !servicesSaved) throw new Error('Unable to save Services.');
+
+      setServices(nextServices);
+      setSavedServicesSection(JSON.stringify(servicesSection));
+      setSavedServices(JSON.stringify(nextServices));
+      setServiceFiles({});
+      setServicePreviews({});
+      setServiceInputKey((current) => current + 1);
+      setMessage('Services saved.');
+
+      for (const url of oldUrls) {
+        await deleteOldImage(url);
+      }
+    } catch (error) {
+      setMessage(error.message);
+    }
+
+    setWorking('');
+  }
+
+  if (!company || !hero || !about || !servicesSection || !services) {
     return (
       <form className={styles.card} onSubmit={openAdmin}>
         <h2>Admin Password</h2>
@@ -255,7 +347,7 @@ export default function AdminContentEditor() {
   return (
     <>
       <nav className={styles.sectionNav}>
-        {['company', 'hero', 'about'].map((section) => (
+        {['company', 'hero', 'about', 'services'].map((section) => (
           <a
             key={section}
             href={`#${section}`}
@@ -419,6 +511,139 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!aboutChanged || working === 'about'}>
           {working === 'about' ? 'Saving...' : 'Save About'}
+        </button>
+      </form>
+
+      <form
+        id="services"
+        data-admin-section
+        className={styles.card}
+        onSubmit={saveServices}
+      >
+        <h2>Services</h2>
+
+        <div className={styles.grid}>
+          <label>
+            Eyebrow
+            <input
+              value={servicesSection.eyebrow ?? ''}
+              onChange={(event) => update(setServicesSection, 'eyebrow', event.target.value)}
+            />
+          </label>
+          <label>
+            Title
+            <input
+              value={servicesSection.title ?? ''}
+              onChange={(event) => update(setServicesSection, 'title', event.target.value)}
+            />
+          </label>
+          <label>
+            Accent Title
+            <input
+              value={servicesSection.titleAccent ?? ''}
+              onChange={(event) => update(setServicesSection, 'titleAccent', event.target.value)}
+            />
+          </label>
+          <label>
+            Link Text
+            <input
+              value={servicesSection.linkLabel ?? ''}
+              onChange={(event) => update(setServicesSection, 'linkLabel', event.target.value)}
+            />
+          </label>
+          <label className={styles.fullWidth}>
+            Introduction
+            <textarea
+              value={servicesSection.intro ?? ''}
+              onChange={(event) => update(setServicesSection, 'intro', event.target.value)}
+            />
+          </label>
+        </div>
+
+        {services.map((service, serviceIndex) => (
+          <div className={styles.itemEditor} key={service.id}>
+            <h3>Service {serviceIndex + 1}</h3>
+            <div className={styles.grid}>
+              <label>
+                Title
+                <input
+                  value={service.title ?? ''}
+                  onChange={(event) =>
+                    setServices((current) =>
+                      current.map((item, index) =>
+                        index === serviceIndex ? { ...item, title: event.target.value } : item
+                      )
+                    )
+                  }
+                />
+              </label>
+              <label>
+                Image Description
+                <input
+                  value={service.image?.alt ?? ''}
+                  onChange={(event) =>
+                    setServices((current) =>
+                      current.map((item, index) =>
+                        index === serviceIndex
+                          ? { ...item, image: { ...item.image, alt: event.target.value } }
+                          : item
+                      )
+                    )
+                  }
+                />
+              </label>
+              <label className={styles.fullWidth}>
+                Description
+                <textarea
+                  value={service.description ?? ''}
+                  onChange={(event) =>
+                    setServices((current) =>
+                      current.map((item, index) =>
+                        index === serviceIndex ? { ...item, description: event.target.value } : item
+                      )
+                    )
+                  }
+                />
+              </label>
+
+              {service.features.map((feature, featureIndex) => (
+                <label key={feature.id}>
+                  Feature {featureIndex + 1}
+                  <input
+                    value={feature.label ?? ''}
+                    onChange={(event) =>
+                      setServices((current) =>
+                        current.map((item, index) =>
+                          index === serviceIndex
+                            ? {
+                                ...item,
+                                features: item.features.map((entry, entryIndex) =>
+                                  entryIndex === featureIndex
+                                    ? { ...entry, label: event.target.value }
+                                    : entry
+                                ),
+                              }
+                            : item
+                        )
+                      )
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+
+            <ImageEditor
+              title={`Service ${serviceIndex + 1}`}
+              image={service.image}
+              preview={servicePreviews[service.id] ?? ''}
+              inputKey={`${serviceInputKey}-${service.id}`}
+              onChange={(event) => chooseServiceImage(event, service.id)}
+            />
+          </div>
+        ))}
+
+        <button type="submit" disabled={!servicesChanged || working === 'services'}>
+          {working === 'services' ? 'Saving...' : 'Save Services'}
         </button>
       </form>
     </>

@@ -15,7 +15,9 @@ export async function GET(request) {
     SELECT
       content->'company' AS company,
       content->'hero' AS hero,
-      content->'about' AS about
+      content->'about' AS about,
+      content->'servicesSection' AS "servicesSection",
+      content->'services' AS services
     FROM site_settings
     WHERE site_settings_pk = 1
   `;
