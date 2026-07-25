@@ -5,6 +5,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './admin.module.css';
 
+const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
+
 const companyFields = [
   ['logoIcon', 'Logo Icon'],
   ['logoPrimary', 'Logo First Word'],
@@ -96,10 +98,19 @@ export default function AdminContentEditor() {
 
   function chooseHeroImage(event) {
     const file = event.target.files?.[0] ?? null;
-    setHeroFile(file);
     setMessage('');
 
     if (previewUrl) URL.revokeObjectURL(previewUrl);
+
+    if (file && file.size > MAX_IMAGE_SIZE) {
+      event.target.value = '';
+      setHeroFile(null);
+      setPreviewUrl('');
+      setMessage('Image must be 4 MB or smaller.');
+      return;
+    }
+
+    setHeroFile(file);
     setPreviewUrl(file ? URL.createObjectURL(file) : '');
   }
 
@@ -150,8 +161,8 @@ export default function AdminContentEditor() {
       });
 
       if (!uploadResponse.ok) {
-        const result = await uploadResponse.json();
-        setMessage(result.error ?? 'Unable to upload the image.');
+        const result = await uploadResponse.json().catch(() => null);
+        setMessage(result?.error ?? 'Unable to upload the image.');
         setWorking('');
         return;
       }
