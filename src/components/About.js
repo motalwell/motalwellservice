@@ -6,6 +6,7 @@ export default function About({ about }) {
     <section style={{ background: 'var(--white)' }} id="about">
       <div className="about">
         <div className="about-text">
+         
           <div className="section-eyebrow">{about.eyebrow}</div>
           <h2 className="section-title">{about.title}<br /><span>{about.titleAccent}</span></h2>
           {about.paragraphs.map((paragraph) => (
