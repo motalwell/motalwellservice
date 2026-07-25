@@ -29,11 +29,15 @@ export default function AdminContentEditor() {
   const [about, setAbout] = useState(null);
   const [servicesSection, setServicesSection] = useState(null);
   const [services, setServices] = useState(null);
+  const [process, setProcess] = useState(null);
+  const [faq, setFaq] = useState(null);
   const [savedCompany, setSavedCompany] = useState('');
   const [savedHero, setSavedHero] = useState('');
   const [savedAbout, setSavedAbout] = useState('');
   const [savedServicesSection, setSavedServicesSection] = useState('');
   const [savedServices, setSavedServices] = useState('');
+  const [savedProcess, setSavedProcess] = useState('');
+  const [savedFaq, setSavedFaq] = useState('');
   const [heroFile, setHeroFile] = useState(null);
   const [aboutFile, setAboutFile] = useState(null);
   const [serviceFiles, setServiceFiles] = useState({});
@@ -86,6 +90,14 @@ export default function AdminContentEditor() {
       Object.keys(serviceFiles).length > 0,
     [servicesSection, services, savedServicesSection, savedServices, serviceFiles]
   );
+  const processChanged = useMemo(
+    () => changed(process, savedProcess),
+    [process, savedProcess]
+  );
+  const faqChanged = useMemo(
+    () => changed(faq, savedFaq),
+    [faq, savedFaq]
+  );
 
   async function openAdmin(event) {
     event.preventDefault();
@@ -108,11 +120,15 @@ export default function AdminContentEditor() {
     setAbout(data.about);
     setServicesSection(data.servicesSection);
     setServices(data.services);
+    setProcess(data.process);
+    setFaq(data.faq);
     setSavedCompany(JSON.stringify(data.company));
     setSavedHero(JSON.stringify(data.hero));
     setSavedAbout(JSON.stringify(data.about));
     setSavedServicesSection(JSON.stringify(data.servicesSection));
     setSavedServices(JSON.stringify(data.services));
+    setSavedProcess(JSON.stringify(data.process));
+    setSavedFaq(JSON.stringify(data.faq));
     setWorking('');
   }
 
@@ -279,6 +295,23 @@ export default function AdminContentEditor() {
   }
 
 
+  async function saveTextSection(event, section, data, setSaved, label) {
+    event.preventDefault();
+    setWorking(section);
+    setMessage('');
+
+    const saved = await saveSection(section, data);
+    if (saved) {
+      setSaved(JSON.stringify(data));
+      setMessage(`${label} saved.`);
+    } else {
+      setMessage(`Unable to save ${label}.`);
+    }
+
+    setWorking('');
+  }
+
+
   async function saveServices(event) {
     event.preventDefault();
     setWorking('services');
@@ -323,7 +356,7 @@ export default function AdminContentEditor() {
     setWorking('');
   }
 
-  if (!company || !hero || !about || !servicesSection || !services) {
+  if (!company || !hero || !about || !servicesSection || !services || !process || !faq) {
     return (
       <form className={styles.card} onSubmit={openAdmin}>
         <h2>Admin Password</h2>
@@ -347,7 +380,7 @@ export default function AdminContentEditor() {
   return (
     <>
       <nav className={styles.sectionNav}>
-        {['company', 'hero', 'about', 'services'].map((section) => (
+        {['company', 'hero', 'services', 'about', 'process', 'faq'].map((section) => (
           <a
             key={section}
             href={`#${section}`}
@@ -438,79 +471,6 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!heroChanged || working === 'hero'}>
           {working === 'hero' ? 'Saving...' : 'Save Hero'}
-        </button>
-      </form>
-
-      <form
-        id="about"
-        data-admin-section
-        className={styles.card}
-        onSubmit={(event) => {
-          event.preventDefault();
-          saveImageSection('about', about, aboutFile, setAbout, setSavedAbout, setAboutFile, setAboutPreview, setAboutInputKey);
-        }}
-      >
-        <h2>About</h2>
-        <div className={styles.grid}>
-          <label>
-            Eyebrow
-            <input value={about.eyebrow ?? ''} onChange={(event) => update(setAbout, 'eyebrow', event.target.value)} />
-          </label>
-          <label>
-            Title
-            <input value={about.title ?? ''} onChange={(event) => update(setAbout, 'title', event.target.value)} />
-          </label>
-          <label>
-            Accent Title
-            <input value={about.titleAccent ?? ''} onChange={(event) => update(setAbout, 'titleAccent', event.target.value)} />
-          </label>
-          <label>
-            Years
-            <input value={about.years ?? ''} onChange={(event) => update(setAbout, 'years', event.target.value)} />
-          </label>
-          <label>
-            Years Label
-            <input value={about.yearsLabel ?? ''} onChange={(event) => update(setAbout, 'yearsLabel', event.target.value)} />
-          </label>
-          <label>
-            Image Description
-            <input value={about.image?.alt ?? ''} onChange={(event) => updateNested(setAbout, 'image', 'alt', event.target.value)} />
-          </label>
-
-          {about.paragraphs.map((paragraph, index) => (
-            <div className={styles.fullWidth} key={paragraph.id}>
-              <h3>Paragraph {index + 1}</h3>
-              <div className={styles.grid}>
-                <label>
-                  Bold Beginning
-                  <input value={paragraph.lead ?? ''} onChange={(event) => updateArray(setAbout, 'paragraphs', index, 'lead', event.target.value)} />
-                </label>
-                <label>
-                  Paragraph Text
-                  <textarea value={paragraph.text ?? ''} onChange={(event) => updateArray(setAbout, 'paragraphs', index, 'text', event.target.value)} />
-                </label>
-              </div>
-            </div>
-          ))}
-
-          {about.badges.map((badge, index) => (
-            <label key={badge.id}>
-              Badge {index + 1}
-              <input value={badge.label ?? ''} onChange={(event) => updateArray(setAbout, 'badges', index, 'label', event.target.value)} />
-            </label>
-          ))}
-        </div>
-
-        <ImageEditor
-          title="About"
-          image={about.image}
-          preview={aboutPreview}
-          inputKey={aboutInputKey}
-          onChange={(event) => chooseImage(event, setAboutFile, aboutPreview, setAboutPreview)}
-        />
-
-        <button type="submit" disabled={!aboutChanged || working === 'about'}>
-          {working === 'about' ? 'Saving...' : 'Save About'}
         </button>
       </form>
 
@@ -644,6 +604,191 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!servicesChanged || working === 'services'}>
           {working === 'services' ? 'Saving...' : 'Save Services'}
+        </button>
+      </form>
+      <form
+        id="about"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveImageSection('about', about, aboutFile, setAbout, setSavedAbout, setAboutFile, setAboutPreview, setAboutInputKey);
+        }}
+      >
+        <h2>About</h2>
+        <div className={styles.grid}>
+          <label>
+            Eyebrow
+            <input value={about.eyebrow ?? ''} onChange={(event) => update(setAbout, 'eyebrow', event.target.value)} />
+          </label>
+          <label>
+            Title
+            <input value={about.title ?? ''} onChange={(event) => update(setAbout, 'title', event.target.value)} />
+          </label>
+          <label>
+            Accent Title
+            <input value={about.titleAccent ?? ''} onChange={(event) => update(setAbout, 'titleAccent', event.target.value)} />
+          </label>
+          <label>
+            Years
+            <input value={about.years ?? ''} onChange={(event) => update(setAbout, 'years', event.target.value)} />
+          </label>
+          <label>
+            Years Label
+            <input value={about.yearsLabel ?? ''} onChange={(event) => update(setAbout, 'yearsLabel', event.target.value)} />
+          </label>
+          <label>
+            Image Description
+            <input value={about.image?.alt ?? ''} onChange={(event) => updateNested(setAbout, 'image', 'alt', event.target.value)} />
+          </label>
+
+          {about.paragraphs.map((paragraph, index) => (
+            <div className={styles.fullWidth} key={paragraph.id}>
+              <h3>Paragraph {index + 1}</h3>
+              <div className={styles.grid}>
+                <label>
+                  Bold Beginning
+                  <input value={paragraph.lead ?? ''} onChange={(event) => updateArray(setAbout, 'paragraphs', index, 'lead', event.target.value)} />
+                </label>
+                <label>
+                  Paragraph Text
+                  <textarea value={paragraph.text ?? ''} onChange={(event) => updateArray(setAbout, 'paragraphs', index, 'text', event.target.value)} />
+                </label>
+              </div>
+            </div>
+          ))}
+
+          {about.badges.map((badge, index) => (
+            <label key={badge.id}>
+              Badge {index + 1}
+              <input value={badge.label ?? ''} onChange={(event) => updateArray(setAbout, 'badges', index, 'label', event.target.value)} />
+            </label>
+          ))}
+        </div>
+
+        <ImageEditor
+          title="About"
+          image={about.image}
+          preview={aboutPreview}
+          inputKey={aboutInputKey}
+          onChange={(event) => chooseImage(event, setAboutFile, aboutPreview, setAboutPreview)}
+        />
+
+        <button type="submit" disabled={!aboutChanged || working === 'about'}>
+          {working === 'about' ? 'Saving...' : 'Save About'}
+        </button>
+      </form>
+
+      <form
+        id="process"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => saveTextSection(event, 'process', process, setSavedProcess, 'Process')}
+      >
+        <h2>Process</h2>
+        <div className={styles.grid}>
+          <label>
+            Eyebrow
+            <input value={process.eyebrow ?? ''} onChange={(event) => update(setProcess, 'eyebrow', event.target.value)} />
+          </label>
+          <label>
+            Title
+            <input value={process.title ?? ''} onChange={(event) => update(setProcess, 'title', event.target.value)} />
+          </label>
+          <label>
+            Accent Title
+            <input value={process.titleAccent ?? ''} onChange={(event) => update(setProcess, 'titleAccent', event.target.value)} />
+          </label>
+          <label className={styles.fullWidth}>
+            Introduction
+            <textarea value={process.intro ?? ''} onChange={(event) => update(setProcess, 'intro', event.target.value)} />
+          </label>
+        </div>
+
+        {process.steps.map((step, stepIndex) => (
+          <div className={styles.itemEditor} key={step.id}>
+            <h3>Step {stepIndex + 1}</h3>
+            <div className={styles.grid}>
+              <label>
+                Number
+                <input
+                  value={step.number ?? ''}
+                  onChange={(event) => updateArray(setProcess, 'steps', stepIndex, 'number', event.target.value)}
+                />
+              </label>
+              <label>
+                Title
+                <input
+                  value={step.title ?? ''}
+                  onChange={(event) => updateArray(setProcess, 'steps', stepIndex, 'title', event.target.value)}
+                />
+              </label>
+              <label className={styles.fullWidth}>
+                Description
+                <textarea
+                  value={step.description ?? ''}
+                  onChange={(event) => updateArray(setProcess, 'steps', stepIndex, 'description', event.target.value)}
+                />
+              </label>
+            </div>
+          </div>
+        ))}
+
+        <button type="submit" disabled={!processChanged || working === 'process'}>
+          {working === 'process' ? 'Saving...' : 'Save Process'}
+        </button>
+      </form>
+
+      <form
+        id="faq"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => saveTextSection(event, 'faq', faq, setSavedFaq, 'FAQ')}
+      >
+        <h2>FAQ</h2>
+        <div className={styles.grid}>
+          <label>
+            Eyebrow
+            <input value={faq.eyebrow ?? ''} onChange={(event) => update(setFaq, 'eyebrow', event.target.value)} />
+          </label>
+          <label>
+            Title
+            <input value={faq.title ?? ''} onChange={(event) => update(setFaq, 'title', event.target.value)} />
+          </label>
+          <label>
+            Accent Title
+            <input value={faq.titleAccent ?? ''} onChange={(event) => update(setFaq, 'titleAccent', event.target.value)} />
+          </label>
+          <label className={styles.fullWidth}>
+            Introduction
+            <textarea value={faq.intro ?? ''} onChange={(event) => update(setFaq, 'intro', event.target.value)} />
+          </label>
+        </div>
+
+        {faq.items.map((item, itemIndex) => (
+          <div className={styles.itemEditor} key={item.id}>
+            <h3>Question {itemIndex + 1}</h3>
+            <div className={styles.grid}>
+              <label className={styles.fullWidth}>
+                Question
+                <input
+                  value={item.question ?? ''}
+                  onChange={(event) => updateArray(setFaq, 'items', itemIndex, 'question', event.target.value)}
+                />
+              </label>
+              <label className={styles.fullWidth}>
+                Answer
+                <textarea
+                  value={item.answer ?? ''}
+                  onChange={(event) => updateArray(setFaq, 'items', itemIndex, 'answer', event.target.value)}
+                />
+              </label>
+            </div>
+          </div>
+        ))}
+
+        <button type="submit" disabled={!faqChanged || working === 'faq'}>
+          {working === 'faq' ? 'Saving...' : 'Save FAQ'}
         </button>
       </form>
     </>
