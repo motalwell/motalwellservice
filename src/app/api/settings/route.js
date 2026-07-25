@@ -12,12 +12,14 @@ export async function GET(request) {
   }
 
   const [settings] = await sql`
-    SELECT content->'company' AS company
+    SELECT
+      content->'company' AS company,
+      content->'hero' AS hero
     FROM site_settings
     WHERE site_settings_pk = 1
   `;
 
-  return Response.json({ company: settings.company });
+  return Response.json(settings);
 }
 
 export async function PATCH(request) {
@@ -25,13 +27,23 @@ export async function PATCH(request) {
     return Response.json({ error: 'Incorrect password.' }, { status: 401 });
   }
 
-  const { company } = await request.json();
+  const { section, data } = await request.json();
 
-  await sql`
-    UPDATE site_settings
-    SET content = jsonb_set(content, '{company}', ${JSON.stringify(company)}::jsonb)
-    WHERE site_settings_pk = 1
-  `;
+  if (section === 'company') {
+    await sql`
+      UPDATE site_settings
+      SET content = jsonb_set(content, '{company}', ${JSON.stringify(data)}::jsonb)
+      WHERE site_settings_pk = 1
+    `;
+  }
+
+  if (section === 'hero') {
+    await sql`
+      UPDATE site_settings
+      SET content = jsonb_set(content, '{hero}', ${JSON.stringify(data)}::jsonb)
+      WHERE site_settings_pk = 1
+    `;
+  }
 
   return Response.json({ saved: true });
 }

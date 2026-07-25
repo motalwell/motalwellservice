@@ -1,4 +1,4 @@
-import AdminCompanyEditor from './AdminCompanyEditor';
+import AdminContentEditor from './AdminContentEditor';
 import styles from './admin.module.css';
 
 export const metadata = {
@@ -10,7 +10,7 @@ export default function AdminPage() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <h1>Motal Website Content</h1>
-        <AdminCompanyEditor />
+        <AdminContentEditor />
       </div>
     </main>
   );
