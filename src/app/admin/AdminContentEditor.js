@@ -1077,10 +1077,6 @@ export default function AdminContentEditor() {
             <h3>Contact Item {itemIndex + 1}</h3>
             <div className={styles.grid}>
               <label>
-                Icon
-                <input value={item.icon ?? ''} onChange={(event) => updateItem(setContact, itemIndex, 'icon', event.target.value)} />
-              </label>
-              <label>
                 Label
                 <input value={item.label ?? ''} onChange={(event) => updateItem(setContact, itemIndex, 'label', event.target.value)} />
               </label>
