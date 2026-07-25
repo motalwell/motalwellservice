@@ -3,9 +3,10 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useState } from 'react';
+import { upload } from '@vercel/blob/client';
 import styles from './admin.module.css';
 
-const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 6 * 1024 * 1024;
 
 const companyFields = [
   ['logoIcon', 'Logo Icon'],
@@ -231,7 +232,7 @@ export default function AdminContentEditor() {
       event.target.value = '';
       setFile(null);
       setPreview('');
-      setMessage('Image must be 4 MB or smaller.');
+      setMessage('Image must be 6 MB or smaller.');
       return;
     }
 
@@ -259,7 +260,7 @@ export default function AdminContentEditor() {
         delete next[serviceId];
         return next;
       });
-      setMessage('Image must be 4 MB or smaller.');
+      setMessage('Image must be 6 MB or smaller.');
       return;
     }
 
@@ -299,22 +300,17 @@ export default function AdminContentEditor() {
   }
 
   async function uploadImage(section, file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('section', section);
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
 
-    const response = await fetch('/api/blob', {
-      method: 'POST',
-      headers: { 'x-admin-password': password },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const result = await response.json().catch(() => null);
-      throw new Error(result?.error ?? 'Unable to upload the image.');
+    try {
+      return await upload(`${section || 'images'}/${safeName}`, file, {
+        access: 'public',
+        handleUploadUrl: '/api/blob',
+        clientPayload: JSON.stringify({ password }),
+      });
+    } catch (error) {
+      throw new Error(error?.message || 'Unable to upload the image.');
     }
-
-    return response.json();
   }
 
   async function deleteOldImage(url) {
@@ -1251,7 +1247,7 @@ function ImageEditor({ title, image, preview, inputKey, onChange }) {
           accept="image/jpeg,image/png,image/webp"
           onChange={onChange}
         />
-        <p className={styles.help}>JPG, PNG or WEBP. Maximum 4 MB.</p>
+        <p className={styles.help}>JPG, PNG or WEBP. Maximum 6 MB.</p>
       </div>
     </div>
   );
