@@ -7,6 +7,7 @@ import { upload } from '@vercel/blob/client';
 import styles from './admin.module.css';
 
 const MAX_IMAGE_SIZE = 6 * 1024 * 1024;
+const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024;
 
 const companyFields = [
   ['logoIcon', 'Logo Icon'],
@@ -301,12 +302,35 @@ export default function AdminContentEditor() {
 
   async function uploadImage(section, file) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+    const pathname = `${section || 'images'}/${safeName}`;
 
     try {
-      return await upload(`${section || 'images'}/${safeName}`, file, {
+      // Smaller images use the simpler server upload path. This avoids the
+      // browser-to-Blob token flow that was stalling in production.
+      if (file.size <= SERVER_UPLOAD_LIMIT) {
+        const response = await fetch(`/api/blob?pathname=${encodeURIComponent(pathname)}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': file.type || 'application/octet-stream',
+            'x-admin-password': password,
+          },
+          body: file,
+        });
+
+        const result = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(result?.error || 'Unable to upload the image.');
+        }
+        return result;
+      }
+
+      // Images between 4 MB and 6 MB upload directly to Blob so they do not
+      // exceed Vercel's request-body limit for Functions.
+      return await upload(pathname, file, {
         access: 'public',
         handleUploadUrl: '/api/blob',
         clientPayload: JSON.stringify({ password }),
+        multipart: true,
       });
     } catch (error) {
       throw new Error(error?.message || 'Unable to upload the image.');
