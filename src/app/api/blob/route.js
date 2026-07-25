@@ -14,8 +14,8 @@ export async function POST(request) {
   try {
     const contentType = request.headers.get('content-type') || '';
 
-    // Direct server upload for normal website images. This path is deliberately
-    // used for files up to 4 MB because it is simpler and more reliable.
+    // Preserved server-upload fallback. The admin uploader currently defaults
+    // to direct browser-to-Blob uploads, but this path remains available.
     if (!contentType.includes('application/json')) {
       if (!authorized(request)) {
         return Response.json({ error: 'Incorrect password.' }, { status: 401 });
@@ -44,7 +44,7 @@ export async function POST(request) {
       return Response.json(blob);
     }
 
-    // Token endpoint and completion callback for direct client uploads above 4 MB.
+    // Token endpoint and completion callback for direct browser-to-Blob uploads.
     const body = await request.json();
     const response = await handleUpload({
       body,

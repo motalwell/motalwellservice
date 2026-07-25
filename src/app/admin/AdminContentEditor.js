@@ -8,6 +8,8 @@ import styles from './admin.module.css';
 
 const MAX_IMAGE_SIZE = 6 * 1024 * 1024;
 const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024;
+// Toggle between direct browser-to-Blob uploads and the preserved server upload fallback.
+const USE_DIRECT_BLOB_UPLOAD = true;
 
 const companyFields = [
   ['logoIcon', 'Logo Icon'],
@@ -317,38 +319,41 @@ export default function AdminContentEditor() {
     const pathname = `${section || 'images'}/${safeName}`;
 
     try {
-      // Smaller images use the simpler server upload path. This avoids the
-      // browser-to-Blob token flow that was stalling in production.
-      if (file.size <= SERVER_UPLOAD_LIMIT) {
-        const response = await fetchWithTimeout(`/api/blob?pathname=${encodeURIComponent(pathname)}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': file.type || 'application/octet-stream',
-            'x-admin-password': password,
-          },
-          body: file,
-        });
-
-        const result = await response.json().catch(() => null);
-        if (!response.ok) {
-          throw new Error(result?.error || 'Unable to upload the image.');
-        }
-        return result;
+      if (USE_DIRECT_BLOB_UPLOAD) {
+        // Default path: upload every image directly from the browser to Vercel Blob.
+        return await Promise.race([
+          upload(pathname, file, {
+            access: 'public',
+            handleUploadUrl: '/api/blob',
+            clientPayload: JSON.stringify({ password }),
+            multipart: true,
+          }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('The image upload timed out. Please try again.')), 90000)
+          ),
+        ]);
       }
 
-      // Images between 4 MB and 6 MB upload directly to Blob so they do not
-      // exceed Vercel's request-body limit for Functions.
-      return await Promise.race([
-        upload(pathname, file, {
-          access: 'public',
-          handleUploadUrl: '/api/blob',
-          clientPayload: JSON.stringify({ password }),
-          multipart: true,
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('The image upload timed out. Please try again.')), 90000)
-        ),
-      ]);
+      // Preserved fallback: send the image through the Next.js/Vercel Function first.
+      // Vercel Functions have a smaller request-body limit, so keep this path at 4 MB.
+      if (file.size > SERVER_UPLOAD_LIMIT) {
+        throw new Error('Server uploads are limited to 4 MB. Enable direct Blob uploads for larger images.');
+      }
+
+      const response = await fetchWithTimeout(`/api/blob?pathname=${encodeURIComponent(pathname)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': file.type || 'application/octet-stream',
+          'x-admin-password': password,
+        },
+        body: file,
+      });
+
+      const result = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(result?.error || 'Unable to upload the image.');
+      }
+      return result;
     } catch (error) {
       throw new Error(error?.message || 'Unable to upload the image.');
     }
