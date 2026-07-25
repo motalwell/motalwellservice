@@ -39,11 +39,16 @@ export async function PATCH(request) {
     return Response.json({ error: 'Incorrect password.' }, { status: 401 });
   }
 
-  const { section, data } = await request.json();
+  const { section, data, updates } = await request.json();
+  const nextUpdates = updates ?? (section ? { [section]: data } : null);
+
+  if (!nextUpdates || typeof nextUpdates !== 'object' || Array.isArray(nextUpdates)) {
+    return Response.json({ error: 'Invalid settings update.' }, { status: 400 });
+  }
 
   await sql`
     UPDATE site_settings
-    SET content = jsonb_set(content, ARRAY[${section}], ${JSON.stringify(data)}::jsonb)
+    SET content = content || ${JSON.stringify(nextUpdates)}::jsonb
     WHERE site_settings_pk = 1
   `;
 

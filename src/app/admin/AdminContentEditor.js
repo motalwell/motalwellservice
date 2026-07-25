@@ -141,17 +141,24 @@ export default function AdminContentEditor() {
     setWorking('login');
     setMessage('');
 
-    const response = await fetch('/api/settings', {
-      headers: { 'x-admin-password': password },
-    });
+    let data;
+    try {
+      const response = await fetch('/api/settings', {
+        headers: { 'x-admin-password': password },
+      });
 
-    if (!response.ok) {
-      setMessage('Incorrect password.');
-      setWorking('');
+      if (!response.ok) {
+        setMessage(response.status === 401 ? 'Incorrect password.' : 'Unable to open Admin.');
+        return;
+      }
+
+      data = await response.json();
+    } catch {
+      setMessage('Unable to open Admin.');
       return;
+    } finally {
+      setWorking('');
     }
-
-    const data = await response.json();
     setCompany(data.company);
     setNavigation(data.navigation);
     setHero(data.hero);
@@ -180,7 +187,6 @@ export default function AdminContentEditor() {
     setSavedQuoteForm(JSON.stringify(data.quoteForm));
     setSavedSuccessModal(JSON.stringify(data.successModal));
     setSavedFooter(JSON.stringify(data.footer));
-    setWorking('');
   }
 
   function update(setter, key, value) {
@@ -272,17 +278,24 @@ export default function AdminContentEditor() {
     });
   }
 
-  async function saveSection(section, data) {
+  async function saveSections(updates) {
     const response = await fetch('/api/settings', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'x-admin-password': password,
       },
-      body: JSON.stringify({ section, data }),
+      body: JSON.stringify({ updates }),
     });
 
-    return response.ok;
+    if (!response.ok) {
+      const result = await response.json().catch(() => null);
+      throw new Error(result?.error ?? 'Unable to save changes.');
+    }
+  }
+
+  async function saveSection(section, data) {
+    await saveSections({ [section]: data });
   }
 
   async function uploadImage(section, file) {
@@ -326,21 +339,23 @@ export default function AdminContentEditor() {
     setWorking('company');
     setMessage('');
 
-    const companySaved = await saveSection('company', company);
-    const navigationSaved = await saveSection('navigation', navigation);
-    if (companySaved && navigationSaved) {
+    try {
+      await saveSections({ company, navigation });
       setSavedCompany(JSON.stringify(company));
       setSavedNavigation(JSON.stringify(navigation));
       setMessage('Company saved.');
-    } else {
+    } catch {
       setMessage('Unable to save Company.');
+    } finally {
+      setWorking('');
     }
-    setWorking('');
   }
 
   async function saveImageSection(section, data, file, setter, setSaved, clearFile, clearPreview, resetInput) {
     setWorking(section);
     setMessage('');
+
+    let uploadedUrl = '';
 
     try {
       let nextData = data;
@@ -348,11 +363,11 @@ export default function AdminContentEditor() {
 
       if (file) {
         const { url } = await uploadImage(section, file);
+        uploadedUrl = url;
         nextData = { ...data, image: { ...data.image, url } };
       }
 
-      const saved = await saveSection(section, nextData);
-      if (!saved) throw new Error(`Unable to save ${section}.`);
+      await saveSection(section, nextData);
 
       setter(nextData);
       setSaved(JSON.stringify(nextData));
@@ -366,6 +381,7 @@ export default function AdminContentEditor() {
         await deleteOldImage(oldUrl);
       }
     } catch (error) {
+      if (uploadedUrl) await deleteOldImage(uploadedUrl);
       setMessage(error.message);
     }
 
@@ -378,15 +394,15 @@ export default function AdminContentEditor() {
     setWorking(section);
     setMessage('');
 
-    const saved = await saveSection(section, data);
-    if (saved) {
+    try {
+      await saveSection(section, data);
       setSaved(JSON.stringify(data));
       setMessage(`${label} saved.`);
-    } else {
+    } catch {
       setMessage(`Unable to save ${label}.`);
+    } finally {
+      setWorking('');
     }
-
-    setWorking('');
   }
 
 
@@ -394,6 +410,8 @@ export default function AdminContentEditor() {
     event.preventDefault();
     setWorking('services');
     setMessage('');
+
+    const uploadedUrls = [];
 
     try {
       let nextServices = services;
@@ -404,6 +422,7 @@ export default function AdminContentEditor() {
         if (index === -1) continue;
 
         const { url } = await uploadImage(`services-${serviceId}`, file);
+        uploadedUrls.push(url);
         oldUrls.push(nextServices[index].image?.url);
         nextServices = nextServices.map((service, serviceIndex) =>
           serviceIndex === index
@@ -412,9 +431,7 @@ export default function AdminContentEditor() {
         );
       }
 
-      const sectionSaved = await saveSection('servicesSection', servicesSection);
-      const servicesSaved = await saveSection('services', nextServices);
-      if (!sectionSaved || !servicesSaved) throw new Error('Unable to save Services.');
+      await saveSections({ servicesSection, services: nextServices });
 
       setServices(nextServices);
       setSavedServicesSection(JSON.stringify(servicesSection));
@@ -429,6 +446,7 @@ export default function AdminContentEditor() {
         await deleteOldImage(url);
       }
     } catch (error) {
+      for (const url of uploadedUrls) await deleteOldImage(url);
       setMessage(error.message);
     }
 
@@ -440,20 +458,17 @@ export default function AdminContentEditor() {
     setWorking('contact');
     setMessage('');
 
-    const contactSaved = await saveSection('contact', contact);
-    const formSaved = await saveSection('quoteForm', quoteForm);
-    const modalSaved = await saveSection('successModal', successModal);
-
-    if (contactSaved && formSaved && modalSaved) {
+    try {
+      await saveSections({ contact, quoteForm, successModal });
       setSavedContact(JSON.stringify(contact));
       setSavedQuoteForm(JSON.stringify(quoteForm));
       setSavedSuccessModal(JSON.stringify(successModal));
       setMessage('Contact saved.');
-    } else {
+    } catch {
       setMessage('Unable to save Contact.');
+    } finally {
+      setWorking('');
     }
-
-    setWorking('');
   }
 
   if (!company || !navigation || !hero || !stats || !about || !photoCallout || !servicesSection || !services || !process || !faq || !contact || !quoteForm || !successModal || !footer) {
