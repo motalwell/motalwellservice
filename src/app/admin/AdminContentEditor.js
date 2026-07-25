@@ -18,31 +18,59 @@ const companyFields = [
   ['serviceAreaShort', 'Service Area'],
 ];
 
+function changed(current, saved, file) {
+  return current && (JSON.stringify(current) !== saved || file);
+}
+
 export default function AdminContentEditor() {
   const [password, setPassword] = useState('');
   const [company, setCompany] = useState(null);
   const [hero, setHero] = useState(null);
+  const [about, setAbout] = useState(null);
   const [savedCompany, setSavedCompany] = useState('');
   const [savedHero, setSavedHero] = useState('');
+  const [savedAbout, setSavedAbout] = useState('');
   const [heroFile, setHeroFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [aboutFile, setAboutFile] = useState(null);
+  const [heroPreview, setHeroPreview] = useState('');
+  const [aboutPreview, setAboutPreview] = useState('');
+  const [heroInputKey, setHeroInputKey] = useState(0);
+  const [aboutInputKey, setAboutInputKey] = useState(0);
+  const [activeSection, setActiveSection] = useState('company');
   const [message, setMessage] = useState('');
   const [working, setWorking] = useState('');
 
+  useEffect(() => () => {
+    if (heroPreview) URL.revokeObjectURL(heroPreview);
+    if (aboutPreview) URL.revokeObjectURL(aboutPreview);
+  }, [heroPreview, aboutPreview]);
+
   useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+    if (!company) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (visible) setActiveSection(visible.target.id);
+      },
+      { rootMargin: '-25% 0px -65% 0px' }
+    );
+
+    document.querySelectorAll('[data-admin-section]').forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [company]);
 
   const companyChanged = useMemo(
-    () => company && JSON.stringify(company) !== savedCompany,
+    () => changed(company, savedCompany),
     [company, savedCompany]
   );
-
   const heroChanged = useMemo(
-    () => hero && (JSON.stringify(hero) !== savedHero || heroFile),
+    () => changed(hero, savedHero, heroFile),
     [hero, savedHero, heroFile]
+  );
+  const aboutChanged = useMemo(
+    () => changed(about, savedAbout, aboutFile),
+    [about, savedAbout, aboutFile]
   );
 
   async function openAdmin(event) {
@@ -63,55 +91,51 @@ export default function AdminContentEditor() {
     const data = await response.json();
     setCompany(data.company);
     setHero(data.hero);
+    setAbout(data.about);
     setSavedCompany(JSON.stringify(data.company));
     setSavedHero(JSON.stringify(data.hero));
+    setSavedAbout(JSON.stringify(data.about));
     setWorking('');
   }
 
-  function updateCompany(key, value) {
-    setCompany((current) => ({ ...current, [key]: value }));
+  function update(setter, key, value) {
+    setter((current) => ({ ...current, [key]: value }));
     setMessage('');
   }
 
-  function updateHero(key, value) {
-    setHero((current) => ({ ...current, [key]: value }));
-    setMessage('');
-  }
-
-  function updateHeroNested(group, key, value) {
-    setHero((current) => ({
+  function updateNested(setter, group, key, value) {
+    setter((current) => ({
       ...current,
       [group]: { ...current[group], [key]: value },
     }));
     setMessage('');
   }
 
-  function updateTitleLine(index, value) {
-    setHero((current) => ({
+  function updateArray(setter, group, index, key, value) {
+    setter((current) => ({
       ...current,
-      titleLines: current.titleLines.map((line, lineIndex) =>
-        lineIndex === index ? { ...line, text: value } : line
+      [group]: current[group].map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [key]: value } : item
       ),
     }));
     setMessage('');
   }
 
-  function chooseHeroImage(event) {
+  function chooseImage(event, setFile, preview, setPreview) {
     const file = event.target.files?.[0] ?? null;
     setMessage('');
-
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    if (preview) URL.revokeObjectURL(preview);
 
     if (file && file.size > MAX_IMAGE_SIZE) {
       event.target.value = '';
-      setHeroFile(null);
-      setPreviewUrl('');
+      setFile(null);
+      setPreview('');
       setMessage('Image must be 4 MB or smaller.');
       return;
     }
 
-    setHeroFile(file);
-    setPreviewUrl(file ? URL.createObjectURL(file) : '');
+    setFile(file);
+    setPreview(file ? URL.createObjectURL(file) : '');
   }
 
   async function saveSection(section, data) {
@@ -127,6 +151,38 @@ export default function AdminContentEditor() {
     return response.ok;
   }
 
+  async function uploadImage(section, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('section', section);
+
+    const response = await fetch('/api/blob', {
+      method: 'POST',
+      headers: { 'x-admin-password': password },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const result = await response.json().catch(() => null);
+      throw new Error(result?.error ?? 'Unable to upload the image.');
+    }
+
+    return response.json();
+  }
+
+  async function deleteOldImage(url) {
+    if (!url?.includes('.public.blob.vercel-storage.com')) return;
+
+    await fetch('/api/blob', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-password': password,
+      },
+      body: JSON.stringify({ url }),
+    });
+  }
+
   async function saveCompany(event) {
     event.preventDefault();
     setWorking('company');
@@ -135,60 +191,47 @@ export default function AdminContentEditor() {
     const saved = await saveSection('company', company);
     if (saved) {
       setSavedCompany(JSON.stringify(company));
-      setMessage('Company information saved.');
+      setMessage('Company saved.');
     } else {
-      setMessage('Unable to save company information.');
+      setMessage('Unable to save Company.');
     }
-
     setWorking('');
   }
 
-  async function saveHero(event) {
-    event.preventDefault();
-    setWorking('hero');
+  async function saveImageSection(section, data, file, setter, setSaved, clearFile, clearPreview, resetInput) {
+    setWorking(section);
     setMessage('');
 
-    let nextHero = hero;
+    try {
+      let nextData = data;
+      const oldUrl = data.image?.url;
 
-    if (heroFile) {
-      const formData = new FormData();
-      formData.append('file', heroFile);
-
-      const uploadResponse = await fetch('/api/blob/hero', {
-        method: 'POST',
-        headers: { 'x-admin-password': password },
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        const result = await uploadResponse.json().catch(() => null);
-        setMessage(result?.error ?? 'Unable to upload the image.');
-        setWorking('');
-        return;
+      if (file) {
+        const { url } = await uploadImage(section, file);
+        nextData = { ...data, image: { ...data.image, url } };
       }
 
-      const { url } = await uploadResponse.json();
-      nextHero = {
-        ...hero,
-        image: { ...hero.image, url },
-      };
-    }
+      const saved = await saveSection(section, nextData);
+      if (!saved) throw new Error(`Unable to save ${section}.`);
 
-    const saved = await saveSection('hero', nextHero);
-    if (saved) {
-      setHero(nextHero);
-      setSavedHero(JSON.stringify(nextHero));
-      setHeroFile(null);
-      setPreviewUrl('');
-      setMessage('Hero section saved.');
-    } else {
-      setMessage('Unable to save the Hero section.');
+      setter(nextData);
+      setSaved(JSON.stringify(nextData));
+      clearFile(null);
+      clearPreview('');
+      resetInput((current) => current + 1);
+      setMessage(`${section === 'hero' ? 'Hero' : 'About'} saved.`);
+
+      if (file && oldUrl !== nextData.image.url) {
+        await deleteOldImage(oldUrl);
+      }
+    } catch (error) {
+      setMessage(error.message);
     }
 
     setWorking('');
   }
 
-  if (!company || !hero) {
+  if (!company || !hero || !about) {
     return (
       <form className={styles.card} onSubmit={openAdmin}>
         <h2>Admin Password</h2>
@@ -212,13 +255,20 @@ export default function AdminContentEditor() {
   return (
     <>
       <nav className={styles.sectionNav}>
-        <a href="#company">Company</a>
-        <a href="#hero">Hero</a>
+        {['company', 'hero', 'about'].map((section) => (
+          <a
+            key={section}
+            href={`#${section}`}
+            className={activeSection === section ? styles.activeNav : ''}
+          >
+            {section[0].toUpperCase() + section.slice(1)}
+          </a>
+        ))}
       </nav>
 
       {message && <p className={styles.notice}>{message}</p>}
 
-      <form id="company" className={styles.card} onSubmit={saveCompany}>
+      <form id="company" data-admin-section className={styles.card} onSubmit={saveCompany}>
         <h2>Company</h2>
         <div className={styles.grid}>
           {companyFields.map(([key, label]) => (
@@ -227,7 +277,7 @@ export default function AdminContentEditor() {
               <input
                 type={key === 'email' ? 'email' : 'text'}
                 value={company[key] ?? ''}
-                onChange={(event) => updateCompany(key, event.target.value)}
+                onChange={(event) => update(setCompany, key, event.target.value)}
               />
             </label>
           ))}
@@ -237,70 +287,163 @@ export default function AdminContentEditor() {
         </button>
       </form>
 
-      <form id="hero" className={styles.card} onSubmit={saveHero}>
+      <form
+        id="hero"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveImageSection('hero', hero, heroFile, setHero, setSavedHero, setHeroFile, setHeroPreview, setHeroInputKey);
+        }}
+      >
         <h2>Hero</h2>
         <div className={styles.grid}>
           <label>
             Tag
-            <input value={hero.tag ?? ''} onChange={(event) => updateHero('tag', event.target.value)} />
+            <input value={hero.tag ?? ''} onChange={(event) => update(setHero, 'tag', event.target.value)} />
           </label>
 
           {hero.titleLines.map((line, index) => (
             <label key={line.id}>
               Title Line {index + 1}
-              <input value={line.text ?? ''} onChange={(event) => updateTitleLine(index, event.target.value)} />
+              <input value={line.text ?? ''} onChange={(event) => updateArray(setHero, 'titleLines', index, 'text', event.target.value)} />
             </label>
           ))}
 
           <label>
             Emphasized Title
-            <input value={hero.emphasizedTitle ?? ''} onChange={(event) => updateHero('emphasizedTitle', event.target.value)} />
+            <input value={hero.emphasizedTitle ?? ''} onChange={(event) => update(setHero, 'emphasizedTitle', event.target.value)} />
           </label>
 
           <label className={styles.fullWidth}>
             Description
-            <textarea value={hero.description ?? ''} onChange={(event) => updateHero('description', event.target.value)} />
+            <textarea value={hero.description ?? ''} onChange={(event) => update(setHero, 'description', event.target.value)} />
           </label>
 
           <label>
             Primary Button Text
-            <input value={hero.primaryButton?.label ?? ''} onChange={(event) => updateHeroNested('primaryButton', 'label', event.target.value)} />
+            <input value={hero.primaryButton?.label ?? ''} onChange={(event) => updateNested(setHero, 'primaryButton', 'label', event.target.value)} />
           </label>
 
           <label>
             Secondary Button Text
-            <input value={hero.secondaryButton?.label ?? ''} onChange={(event) => updateHeroNested('secondaryButton', 'label', event.target.value)} />
+            <input value={hero.secondaryButton?.label ?? ''} onChange={(event) => updateNested(setHero, 'secondaryButton', 'label', event.target.value)} />
           </label>
 
           <label className={styles.fullWidth}>
             Image Description
-            <input value={hero.image?.alt ?? ''} onChange={(event) => updateHeroNested('image', 'alt', event.target.value)} />
+            <input value={hero.image?.alt ?? ''} onChange={(event) => updateNested(setHero, 'image', 'alt', event.target.value)} />
           </label>
         </div>
 
-        <div className={styles.imageEditor}>
-          <div>
-            <h3>Current Hero Image</h3>
-            <img src={hero.image.url} alt={hero.image.alt || 'Current Hero'} />
-          </div>
-
-          <div>
-            <h3>{previewUrl ? 'Selected New Image' : 'Replace Hero Image'}</h3>
-            {previewUrl && <img src={previewUrl} alt="Selected Hero preview" />}
-            <input
-              className={styles.fileInput}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={chooseHeroImage}
-            />
-            <p className={styles.help}>JPG, PNG or WEBP. Maximum 4 MB.</p>
-          </div>
-        </div>
+        <ImageEditor
+          title="Hero"
+          image={hero.image}
+          preview={heroPreview}
+          inputKey={heroInputKey}
+          onChange={(event) => chooseImage(event, setHeroFile, heroPreview, setHeroPreview)}
+        />
 
         <button type="submit" disabled={!heroChanged || working === 'hero'}>
           {working === 'hero' ? 'Saving...' : 'Save Hero'}
         </button>
       </form>
+
+      <form
+        id="about"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveImageSection('about', about, aboutFile, setAbout, setSavedAbout, setAboutFile, setAboutPreview, setAboutInputKey);
+        }}
+      >
+        <h2>About</h2>
+        <div className={styles.grid}>
+          <label>
+            Eyebrow
+            <input value={about.eyebrow ?? ''} onChange={(event) => update(setAbout, 'eyebrow', event.target.value)} />
+          </label>
+          <label>
+            Title
+            <input value={about.title ?? ''} onChange={(event) => update(setAbout, 'title', event.target.value)} />
+          </label>
+          <label>
+            Accent Title
+            <input value={about.titleAccent ?? ''} onChange={(event) => update(setAbout, 'titleAccent', event.target.value)} />
+          </label>
+          <label>
+            Years
+            <input value={about.years ?? ''} onChange={(event) => update(setAbout, 'years', event.target.value)} />
+          </label>
+          <label>
+            Years Label
+            <input value={about.yearsLabel ?? ''} onChange={(event) => update(setAbout, 'yearsLabel', event.target.value)} />
+          </label>
+          <label>
+            Image Description
+            <input value={about.image?.alt ?? ''} onChange={(event) => updateNested(setAbout, 'image', 'alt', event.target.value)} />
+          </label>
+
+          {about.paragraphs.map((paragraph, index) => (
+            <div className={styles.fullWidth} key={paragraph.id}>
+              <h3>Paragraph {index + 1}</h3>
+              <div className={styles.grid}>
+                <label>
+                  Bold Beginning
+                  <input value={paragraph.lead ?? ''} onChange={(event) => updateArray(setAbout, 'paragraphs', index, 'lead', event.target.value)} />
+                </label>
+                <label>
+                  Paragraph Text
+                  <textarea value={paragraph.text ?? ''} onChange={(event) => updateArray(setAbout, 'paragraphs', index, 'text', event.target.value)} />
+                </label>
+              </div>
+            </div>
+          ))}
+
+          {about.badges.map((badge, index) => (
+            <label key={badge.id}>
+              Badge {index + 1}
+              <input value={badge.label ?? ''} onChange={(event) => updateArray(setAbout, 'badges', index, 'label', event.target.value)} />
+            </label>
+          ))}
+        </div>
+
+        <ImageEditor
+          title="About"
+          image={about.image}
+          preview={aboutPreview}
+          inputKey={aboutInputKey}
+          onChange={(event) => chooseImage(event, setAboutFile, aboutPreview, setAboutPreview)}
+        />
+
+        <button type="submit" disabled={!aboutChanged || working === 'about'}>
+          {working === 'about' ? 'Saving...' : 'Save About'}
+        </button>
+      </form>
     </>
+  );
+}
+
+function ImageEditor({ title, image, preview, inputKey, onChange }) {
+  return (
+    <div className={styles.imageEditor}>
+      <div>
+        <h3>Current {title} Image</h3>
+        <img src={image.url} alt={image.alt || `Current ${title}`} />
+      </div>
+      <div>
+        <h3>{preview ? 'Selected New Image' : `Replace ${title} Image`}</h3>
+        {preview && <img src={preview} alt={`Selected ${title} preview`} />}
+        <input
+          key={inputKey}
+          className={styles.fileInput}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={onChange}
+        />
+        <p className={styles.help}>JPG, PNG or WEBP. Maximum 4 MB.</p>
+      </div>
+    </div>
   );
 }

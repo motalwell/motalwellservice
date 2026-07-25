@@ -168,3 +168,7 @@
   .card { padding: 22px; }
   .sectionNav { overflow-x: auto; }
 }
+
+.sectionNav .activeNav {
+  background: #e56b1f;
+}

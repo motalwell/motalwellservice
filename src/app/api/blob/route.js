@@ -1,4 +1,4 @@
-import { put } from '@vercel/blob';
+import { del, put } from '@vercel/blob';
 
 export const runtime = 'nodejs';
 
@@ -13,6 +13,7 @@ export async function POST(request) {
 
   const formData = await request.formData();
   const file = formData.get('file');
+  const section = formData.get('section');
 
   if (!file || !file.type?.startsWith('image/')) {
     return Response.json({ error: 'Choose an image file.' }, { status: 400 });
@@ -23,10 +24,23 @@ export async function POST(request) {
   }
 
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
-  const blob = await put(`hero/${safeName}`, file, {
+  const blob = await put(`${section || 'images'}/${safeName}`, file, {
     access: 'public',
     addRandomSuffix: true,
   });
 
   return Response.json({ url: blob.url });
+}
+
+export async function DELETE(request) {
+  if (!authorized(request)) {
+    return Response.json({ error: 'Incorrect password.' }, { status: 401 });
+  }
+
+  const { url } = await request.json();
+  if (url?.includes('.public.blob.vercel-storage.com')) {
+    await del(url);
+  }
+
+  return Response.json({ deleted: true });
 }
