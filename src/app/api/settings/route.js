@@ -22,7 +22,8 @@ export async function GET(request) {
       content->'faq' AS faq,
       content->'contact' AS contact,
       content->'quoteForm' AS "quoteForm",
-      content->'successModal' AS "successModal"
+      content->'successModal' AS "successModal",
+      content->'footer' AS footer
     FROM site_settings
     WHERE site_settings_pk = 1
   `;

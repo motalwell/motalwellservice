@@ -34,6 +34,7 @@ export default function AdminContentEditor() {
   const [contact, setContact] = useState(null);
   const [quoteForm, setQuoteForm] = useState(null);
   const [successModal, setSuccessModal] = useState(null);
+  const [footer, setFooter] = useState(null);
   const [savedCompany, setSavedCompany] = useState('');
   const [savedHero, setSavedHero] = useState('');
   const [savedAbout, setSavedAbout] = useState('');
@@ -44,6 +45,7 @@ export default function AdminContentEditor() {
   const [savedContact, setSavedContact] = useState('');
   const [savedQuoteForm, setSavedQuoteForm] = useState('');
   const [savedSuccessModal, setSavedSuccessModal] = useState('');
+  const [savedFooter, setSavedFooter] = useState('');
   const [heroFile, setHeroFile] = useState(null);
   const [aboutFile, setAboutFile] = useState(null);
   const [serviceFiles, setServiceFiles] = useState({});
@@ -104,6 +106,10 @@ export default function AdminContentEditor() {
     () => changed(faq, savedFaq),
     [faq, savedFaq]
   );
+  const footerChanged = useMemo(
+    () => changed(footer, savedFooter),
+    [footer, savedFooter]
+  );
   const contactChanged = useMemo(
     () =>
       JSON.stringify(contact) !== savedContact ||
@@ -138,6 +144,7 @@ export default function AdminContentEditor() {
     setContact(data.contact);
     setQuoteForm(data.quoteForm);
     setSuccessModal(data.successModal);
+    setFooter(data.footer);
     setSavedCompany(JSON.stringify(data.company));
     setSavedHero(JSON.stringify(data.hero));
     setSavedAbout(JSON.stringify(data.about));
@@ -148,6 +155,7 @@ export default function AdminContentEditor() {
     setSavedContact(JSON.stringify(data.contact));
     setSavedQuoteForm(JSON.stringify(data.quoteForm));
     setSavedSuccessModal(JSON.stringify(data.successModal));
+    setSavedFooter(JSON.stringify(data.footer));
     setWorking('');
   }
 
@@ -406,7 +414,7 @@ export default function AdminContentEditor() {
     setWorking('');
   }
 
-  if (!company || !hero || !about || !servicesSection || !services || !process || !faq || !contact || !quoteForm || !successModal) {
+  if (!company || !hero || !about || !servicesSection || !services || !process || !faq || !contact || !quoteForm || !successModal || !footer) {
     return (
       <form className={styles.card} onSubmit={openAdmin}>
         <h2>Admin Password</h2>
@@ -430,7 +438,7 @@ export default function AdminContentEditor() {
   return (
     <>
       <nav className={styles.sectionNav}>
-        {['company', 'hero', 'services', 'about', 'process', 'faq', 'contact'].map((section) => (
+        {['company', 'hero', 'services', 'about', 'process', 'faq', 'contact', 'footer'].map((section) => (
           <a
             key={section}
             href={`#${section}`}
@@ -996,6 +1004,38 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!contactChanged || working === 'contact'}>
           {working === 'contact' ? 'Saving...' : 'Save Contact'}
+        </button>
+      </form>
+
+      <form
+        id="footer"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => saveTextSection(event, 'footer', footer, setSavedFooter, 'Footer')}
+      >
+        <h2>Footer</h2>
+        <div className={styles.grid}>
+          <label className={styles.fullWidth}>
+            Copyright Text
+            <input
+              value={footer.copyright ?? ''}
+              onChange={(event) => update(setFooter, 'copyright', event.target.value)}
+            />
+          </label>
+          <label className={styles.fullWidth}>
+            License Text
+            <input
+              value={footer.license ?? ''}
+              onChange={(event) => update(setFooter, 'license', event.target.value)}
+            />
+          </label>
+          <p className={`${styles.help} ${styles.fullWidth}`}>
+            The logo, phone number, and service area come from the Company section above.
+          </p>
+        </div>
+
+        <button type="submit" disabled={!footerChanged || working === 'footer'}>
+          {working === 'footer' ? 'Saving...' : 'Save Footer'}
         </button>
       </form>
     </>
