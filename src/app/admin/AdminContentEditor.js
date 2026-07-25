@@ -31,6 +31,9 @@ export default function AdminContentEditor() {
   const [services, setServices] = useState(null);
   const [process, setProcess] = useState(null);
   const [faq, setFaq] = useState(null);
+  const [contact, setContact] = useState(null);
+  const [quoteForm, setQuoteForm] = useState(null);
+  const [successModal, setSuccessModal] = useState(null);
   const [savedCompany, setSavedCompany] = useState('');
   const [savedHero, setSavedHero] = useState('');
   const [savedAbout, setSavedAbout] = useState('');
@@ -38,6 +41,9 @@ export default function AdminContentEditor() {
   const [savedServices, setSavedServices] = useState('');
   const [savedProcess, setSavedProcess] = useState('');
   const [savedFaq, setSavedFaq] = useState('');
+  const [savedContact, setSavedContact] = useState('');
+  const [savedQuoteForm, setSavedQuoteForm] = useState('');
+  const [savedSuccessModal, setSavedSuccessModal] = useState('');
   const [heroFile, setHeroFile] = useState(null);
   const [aboutFile, setAboutFile] = useState(null);
   const [serviceFiles, setServiceFiles] = useState({});
@@ -98,6 +104,13 @@ export default function AdminContentEditor() {
     () => changed(faq, savedFaq),
     [faq, savedFaq]
   );
+  const contactChanged = useMemo(
+    () =>
+      JSON.stringify(contact) !== savedContact ||
+      JSON.stringify(quoteForm) !== savedQuoteForm ||
+      JSON.stringify(successModal) !== savedSuccessModal,
+    [contact, quoteForm, successModal, savedContact, savedQuoteForm, savedSuccessModal]
+  );
 
   async function openAdmin(event) {
     event.preventDefault();
@@ -122,6 +135,9 @@ export default function AdminContentEditor() {
     setServices(data.services);
     setProcess(data.process);
     setFaq(data.faq);
+    setContact(data.contact);
+    setQuoteForm(data.quoteForm);
+    setSuccessModal(data.successModal);
     setSavedCompany(JSON.stringify(data.company));
     setSavedHero(JSON.stringify(data.hero));
     setSavedAbout(JSON.stringify(data.about));
@@ -129,6 +145,9 @@ export default function AdminContentEditor() {
     setSavedServices(JSON.stringify(data.services));
     setSavedProcess(JSON.stringify(data.process));
     setSavedFaq(JSON.stringify(data.faq));
+    setSavedContact(JSON.stringify(data.contact));
+    setSavedQuoteForm(JSON.stringify(data.quoteForm));
+    setSavedSuccessModal(JSON.stringify(data.successModal));
     setWorking('');
   }
 
@@ -149,6 +168,16 @@ export default function AdminContentEditor() {
     setter((current) => ({
       ...current,
       [group]: current[group].map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [key]: value } : item
+      ),
+    }));
+    setMessage('');
+  }
+
+  function updateItem(setter, index, key, value) {
+    setter((current) => ({
+      ...current,
+      items: current.items.map((item, itemIndex) =>
         itemIndex === index ? { ...item, [key]: value } : item
       ),
     }));
@@ -356,7 +385,28 @@ export default function AdminContentEditor() {
     setWorking('');
   }
 
-  if (!company || !hero || !about || !servicesSection || !services || !process || !faq) {
+  async function saveContact(event) {
+    event.preventDefault();
+    setWorking('contact');
+    setMessage('');
+
+    const contactSaved = await saveSection('contact', contact);
+    const formSaved = await saveSection('quoteForm', quoteForm);
+    const modalSaved = await saveSection('successModal', successModal);
+
+    if (contactSaved && formSaved && modalSaved) {
+      setSavedContact(JSON.stringify(contact));
+      setSavedQuoteForm(JSON.stringify(quoteForm));
+      setSavedSuccessModal(JSON.stringify(successModal));
+      setMessage('Contact saved.');
+    } else {
+      setMessage('Unable to save Contact.');
+    }
+
+    setWorking('');
+  }
+
+  if (!company || !hero || !about || !servicesSection || !services || !process || !faq || !contact || !quoteForm || !successModal) {
     return (
       <form className={styles.card} onSubmit={openAdmin}>
         <h2>Admin Password</h2>
@@ -380,7 +430,7 @@ export default function AdminContentEditor() {
   return (
     <>
       <nav className={styles.sectionNav}>
-        {['company', 'hero', 'services', 'about', 'process', 'faq'].map((section) => (
+        {['company', 'hero', 'services', 'about', 'process', 'faq', 'contact'].map((section) => (
           <a
             key={section}
             href={`#${section}`}
@@ -789,6 +839,163 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!faqChanged || working === 'faq'}>
           {working === 'faq' ? 'Saving...' : 'Save FAQ'}
+        </button>
+      </form>
+
+      <form
+        id="contact"
+        data-admin-section
+        className={styles.card}
+        onSubmit={saveContact}
+      >
+        <h2>Contact</h2>
+        <div className={styles.grid}>
+          <label>
+            Eyebrow
+            <input value={contact.eyebrow ?? ''} onChange={(event) => update(setContact, 'eyebrow', event.target.value)} />
+          </label>
+          <label>
+            Title
+            <input value={contact.title ?? ''} onChange={(event) => update(setContact, 'title', event.target.value)} />
+          </label>
+          <label>
+            Accent Title
+            <input value={contact.titleAccent ?? ''} onChange={(event) => update(setContact, 'titleAccent', event.target.value)} />
+          </label>
+          <label className={styles.fullWidth}>
+            Introduction
+            <textarea value={contact.intro ?? ''} onChange={(event) => update(setContact, 'intro', event.target.value)} />
+          </label>
+        </div>
+
+        {contact.items.map((item, itemIndex) => (
+          <div className={styles.itemEditor} key={item.id}>
+            <h3>Contact Item {itemIndex + 1}</h3>
+            <div className={styles.grid}>
+              <label>
+                Icon
+                <input value={item.icon ?? ''} onChange={(event) => updateItem(setContact, itemIndex, 'icon', event.target.value)} />
+              </label>
+              <label>
+                Label
+                <input value={item.label ?? ''} onChange={(event) => updateItem(setContact, itemIndex, 'label', event.target.value)} />
+              </label>
+
+              {item.lines?.map((line, lineIndex) => (
+                <label key={line.id}>
+                  Line {lineIndex + 1}
+                  <input
+                    value={line.text ?? ''}
+                    onChange={(event) =>
+                      setContact((current) => ({
+                        ...current,
+                        items: current.items.map((entry, entryIndex) =>
+                          entryIndex === itemIndex
+                            ? {
+                                ...entry,
+                                lines: entry.lines.map((currentLine, currentLineIndex) =>
+                                  currentLineIndex === lineIndex
+                                    ? { ...currentLine, text: event.target.value }
+                                    : currentLine
+                                ),
+                              }
+                            : entry
+                        ),
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+
+              {!item.lines && item.type !== 'phone' && item.type !== 'email' && (
+                <label className={styles.fullWidth}>
+                  Value
+                  <input value={item.value ?? ''} onChange={(event) => updateItem(setContact, itemIndex, 'value', event.target.value)} />
+                </label>
+              )}
+
+              {(item.type === 'phone' || item.type === 'email') && (
+                <p className={`${styles.help} ${styles.fullWidth}`}>
+                  This value comes from the Company section above.
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+
+        <div className={styles.itemEditor}>
+          <h3>Quote Form</h3>
+          <div className={styles.grid}>
+            <label>
+              Title
+              <input value={quoteForm.title ?? ''} onChange={(event) => update(setQuoteForm, 'title', event.target.value)} />
+            </label>
+            <label>
+              Subtitle
+              <input value={quoteForm.subtitle ?? ''} onChange={(event) => update(setQuoteForm, 'subtitle', event.target.value)} />
+            </label>
+            {Object.entries(quoteForm.fields ?? {}).map(([key, value]) => (
+              <label key={key}>
+                {key[0].toUpperCase() + key.slice(1)} Placeholder
+                <input value={value ?? ''} onChange={(event) => updateNested(setQuoteForm, 'fields', key, event.target.value)} />
+              </label>
+            ))}
+            <label>
+              Submit Button
+              <input value={quoteForm.submitLabel ?? ''} onChange={(event) => update(setQuoteForm, 'submitLabel', event.target.value)} />
+            </label>
+            <label>
+              Sending Button
+              <input value={quoteForm.sendingLabel ?? ''} onChange={(event) => update(setQuoteForm, 'sendingLabel', event.target.value)} />
+            </label>
+            <label className={styles.fullWidth}>
+              Error Message
+              <input value={quoteForm.errorMessage ?? ''} onChange={(event) => update(setQuoteForm, 'errorMessage', event.target.value)} />
+            </label>
+          </div>
+
+          {(quoteForm.serviceOptions ?? []).map((option, optionIndex) => (
+            <label key={option.id} className={styles.optionField}>
+              Service Option {optionIndex + 1}
+              <input
+                value={option.label ?? ''}
+                onChange={(event) =>
+                  setQuoteForm((current) => ({
+                    ...current,
+                    serviceOptions: current.serviceOptions.map((entry, entryIndex) =>
+                      entryIndex === optionIndex ? { ...entry, label: event.target.value } : entry
+                    ),
+                  }))
+                }
+              />
+            </label>
+          ))}
+        </div>
+
+        <div className={styles.itemEditor}>
+          <h3>Success Message</h3>
+          <div className={styles.grid}>
+            <label>
+              Title
+              <input value={successModal.title ?? ''} onChange={(event) => update(setSuccessModal, 'title', event.target.value)} />
+            </label>
+            <label>
+              Accent Title
+              <input value={successModal.titleAccent ?? ''} onChange={(event) => update(setSuccessModal, 'titleAccent', event.target.value)} />
+            </label>
+            <label className={styles.fullWidth}>
+              Message
+              <textarea value={successModal.body ?? ''} onChange={(event) => update(setSuccessModal, 'body', event.target.value)} />
+            </label>
+            <label>
+              Close Button
+              <input value={successModal.closeLabel ?? ''} onChange={(event) => update(setSuccessModal, 'closeLabel', event.target.value)} />
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" disabled={!contactChanged || working === 'contact'}>
+          {working === 'contact' ? 'Saving...' : 'Save Contact'}
         </button>
       </form>
     </>

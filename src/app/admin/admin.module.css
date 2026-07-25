@@ -183,3 +183,7 @@
 .sectionNav .activeNav {
   background: #e56b1f;
 }
+
+.optionField {
+  margin-top: 18px;
+}

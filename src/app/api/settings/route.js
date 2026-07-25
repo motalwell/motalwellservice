@@ -19,7 +19,10 @@ export async function GET(request) {
       content->'servicesSection' AS "servicesSection",
       content->'services' AS services,
       content->'process' AS process,
-      content->'faq' AS faq
+      content->'faq' AS faq,
+      content->'contact' AS contact,
+      content->'quoteForm' AS "quoteForm",
+      content->'successModal' AS "successModal"
     FROM site_settings
     WHERE site_settings_pk = 1
   `;
