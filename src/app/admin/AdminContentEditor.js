@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useMemo, useState } from 'react';
 import styles from './admin.module.css';
 
