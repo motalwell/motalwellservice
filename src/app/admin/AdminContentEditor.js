@@ -25,8 +25,11 @@ function changed(current, saved, file) {
 export default function AdminContentEditor() {
   const [password, setPassword] = useState('');
   const [company, setCompany] = useState(null);
+  const [navigation, setNavigation] = useState(null);
   const [hero, setHero] = useState(null);
+  const [stats, setStats] = useState(null);
   const [about, setAbout] = useState(null);
+  const [photoCallout, setPhotoCallout] = useState(null);
   const [servicesSection, setServicesSection] = useState(null);
   const [services, setServices] = useState(null);
   const [process, setProcess] = useState(null);
@@ -36,8 +39,11 @@ export default function AdminContentEditor() {
   const [successModal, setSuccessModal] = useState(null);
   const [footer, setFooter] = useState(null);
   const [savedCompany, setSavedCompany] = useState('');
+  const [savedNavigation, setSavedNavigation] = useState('');
   const [savedHero, setSavedHero] = useState('');
+  const [savedStats, setSavedStats] = useState('');
   const [savedAbout, setSavedAbout] = useState('');
+  const [savedPhotoCallout, setSavedPhotoCallout] = useState('');
   const [savedServicesSection, setSavedServicesSection] = useState('');
   const [savedServices, setSavedServices] = useState('');
   const [savedProcess, setSavedProcess] = useState('');
@@ -48,12 +54,15 @@ export default function AdminContentEditor() {
   const [savedFooter, setSavedFooter] = useState('');
   const [heroFile, setHeroFile] = useState(null);
   const [aboutFile, setAboutFile] = useState(null);
+  const [photoCalloutFile, setPhotoCalloutFile] = useState(null);
   const [serviceFiles, setServiceFiles] = useState({});
   const [heroPreview, setHeroPreview] = useState('');
   const [aboutPreview, setAboutPreview] = useState('');
+  const [photoCalloutPreview, setPhotoCalloutPreview] = useState('');
   const [servicePreviews, setServicePreviews] = useState({});
   const [heroInputKey, setHeroInputKey] = useState(0);
   const [aboutInputKey, setAboutInputKey] = useState(0);
+  const [photoCalloutInputKey, setPhotoCalloutInputKey] = useState(0);
   const [serviceInputKey, setServiceInputKey] = useState(0);
   const [activeSection, setActiveSection] = useState('company');
   const [message, setMessage] = useState('');
@@ -62,7 +71,8 @@ export default function AdminContentEditor() {
   useEffect(() => () => {
     if (heroPreview) URL.revokeObjectURL(heroPreview);
     if (aboutPreview) URL.revokeObjectURL(aboutPreview);
-  }, [heroPreview, aboutPreview]);
+    if (photoCalloutPreview) URL.revokeObjectURL(photoCalloutPreview);
+  }, [heroPreview, aboutPreview, photoCalloutPreview]);
 
   useEffect(() => {
     if (!company) return;
@@ -80,8 +90,8 @@ export default function AdminContentEditor() {
   }, [company]);
 
   const companyChanged = useMemo(
-    () => changed(company, savedCompany),
-    [company, savedCompany]
+    () => JSON.stringify(company) !== savedCompany || JSON.stringify(navigation) !== savedNavigation,
+    [company, navigation, savedCompany, savedNavigation]
   );
   const heroChanged = useMemo(
     () => changed(hero, savedHero, heroFile),
@@ -90,6 +100,14 @@ export default function AdminContentEditor() {
   const aboutChanged = useMemo(
     () => changed(about, savedAbout, aboutFile),
     [about, savedAbout, aboutFile]
+  );
+  const statsChanged = useMemo(
+    () => JSON.stringify(stats) !== savedStats,
+    [stats, savedStats]
+  );
+  const photoCalloutChanged = useMemo(
+    () => changed(photoCallout, savedPhotoCallout, photoCalloutFile),
+    [photoCallout, savedPhotoCallout, photoCalloutFile]
   );
   const servicesChanged = useMemo(
     () =>
@@ -135,8 +153,11 @@ export default function AdminContentEditor() {
 
     const data = await response.json();
     setCompany(data.company);
+    setNavigation(data.navigation);
     setHero(data.hero);
+    setStats(data.stats);
     setAbout(data.about);
+    setPhotoCallout(data.photoCallout);
     setServicesSection(data.servicesSection);
     setServices(data.services);
     setProcess(data.process);
@@ -146,8 +167,11 @@ export default function AdminContentEditor() {
     setSuccessModal(data.successModal);
     setFooter(data.footer);
     setSavedCompany(JSON.stringify(data.company));
+    setSavedNavigation(JSON.stringify(data.navigation));
     setSavedHero(JSON.stringify(data.hero));
+    setSavedStats(JSON.stringify(data.stats));
     setSavedAbout(JSON.stringify(data.about));
+    setSavedPhotoCallout(JSON.stringify(data.photoCallout));
     setSavedServicesSection(JSON.stringify(data.servicesSection));
     setSavedServices(JSON.stringify(data.services));
     setSavedProcess(JSON.stringify(data.process));
@@ -219,6 +243,16 @@ export default function AdminContentEditor() {
 
     if (file && file.size > MAX_IMAGE_SIZE) {
       event.target.value = '';
+      setServiceFiles((current) => {
+        const next = { ...current };
+        delete next[serviceId];
+        return next;
+      });
+      setServicePreviews((current) => {
+        const next = { ...current };
+        delete next[serviceId];
+        return next;
+      });
       setMessage('Image must be 4 MB or smaller.');
       return;
     }
@@ -273,14 +307,18 @@ export default function AdminContentEditor() {
   async function deleteOldImage(url) {
     if (!url?.includes('.public.blob.vercel-storage.com')) return;
 
-    await fetch('/api/blob', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-admin-password': password,
-      },
-      body: JSON.stringify({ url }),
-    });
+    try {
+      await fetch('/api/blob', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password,
+        },
+        body: JSON.stringify({ url }),
+      });
+    } catch (error) {
+      console.error('Unable to delete the replaced Blob image:', error);
+    }
   }
 
   async function saveCompany(event) {
@@ -288,9 +326,11 @@ export default function AdminContentEditor() {
     setWorking('company');
     setMessage('');
 
-    const saved = await saveSection('company', company);
-    if (saved) {
+    const companySaved = await saveSection('company', company);
+    const navigationSaved = await saveSection('navigation', navigation);
+    if (companySaved && navigationSaved) {
       setSavedCompany(JSON.stringify(company));
+      setSavedNavigation(JSON.stringify(navigation));
       setMessage('Company saved.');
     } else {
       setMessage('Unable to save Company.');
@@ -319,7 +359,8 @@ export default function AdminContentEditor() {
       clearFile(null);
       clearPreview('');
       resetInput((current) => current + 1);
-      setMessage(`${section === 'hero' ? 'Hero' : 'About'} saved.`);
+      const label = section === 'hero' ? 'Hero' : section === 'about' ? 'About' : 'Photo Callout';
+      setMessage(`${label} saved.`);
 
       if (file && oldUrl !== nextData.image.url) {
         await deleteOldImage(oldUrl);
@@ -378,6 +419,7 @@ export default function AdminContentEditor() {
       setServices(nextServices);
       setSavedServicesSection(JSON.stringify(servicesSection));
       setSavedServices(JSON.stringify(nextServices));
+      Object.values(servicePreviews).forEach((preview) => URL.revokeObjectURL(preview));
       setServiceFiles({});
       setServicePreviews({});
       setServiceInputKey((current) => current + 1);
@@ -414,7 +456,7 @@ export default function AdminContentEditor() {
     setWorking('');
   }
 
-  if (!company || !hero || !about || !servicesSection || !services || !process || !faq || !contact || !quoteForm || !successModal || !footer) {
+  if (!company || !navigation || !hero || !stats || !about || !photoCallout || !servicesSection || !services || !process || !faq || !contact || !quoteForm || !successModal || !footer) {
     return (
       <form className={styles.card} onSubmit={openAdmin}>
         <h2>Admin Password</h2>
@@ -438,18 +480,33 @@ export default function AdminContentEditor() {
   return (
     <>
       <nav className={styles.sectionNav}>
-        {['company', 'hero', 'services', 'about', 'process', 'faq', 'contact', 'footer'].map((section) => (
+        {[
+          ['company', 'Company'],
+          ['hero', 'Hero'],
+          ['stats', 'Stats'],
+          ['services', 'Services'],
+          ['about', 'About'],
+          ['photo-callout', 'Photo Callout'],
+          ['process', 'Process'],
+          ['faq', 'FAQ'],
+          ['contact', 'Contact'],
+          ['footer', 'Footer'],
+        ].map(([section, label]) => (
           <a
             key={section}
             href={`#${section}`}
             className={activeSection === section ? styles.activeNav : ''}
           >
-            {section[0].toUpperCase() + section.slice(1)}
+            {label}
           </a>
         ))}
       </nav>
 
-      {message && <p className={styles.notice}>{message}</p>}
+      {message && (
+        <p className={/^(Unable|Incorrect|Image|Choose)/.test(message) ? styles.error : styles.notice}>
+          {message}
+        </p>
+      )}
 
       <form id="company" data-admin-section className={styles.card} onSubmit={saveCompany}>
         <h2>Company</h2>
@@ -464,6 +521,29 @@ export default function AdminContentEditor() {
               />
             </label>
           ))}
+          <div className={styles.fullWidth}>
+            <div className={styles.itemEditor}>
+              <h3>Header Navigation</h3>
+              <div className={styles.grid}>
+                {navigation.map((item, index) => (
+                  <label key={item.id}>
+                    Link {index + 1}
+                    <input
+                      value={item.label ?? ''}
+                      onChange={(event) =>
+                        setNavigation((current) =>
+                          current.map((entry, entryIndex) =>
+                            entryIndex === index ? { ...entry, label: event.target.value } : entry
+                          )
+                        )
+                      }
+                    />
+                  </label>
+                ))}
+              </div>
+              <p className={styles.help}>Navigation destinations stay fixed so the links continue scrolling to the correct sections.</p>
+            </div>
+          </div>
         </div>
         <button type="submit" disabled={!companyChanged || working === 'company'}>
           {working === 'company' ? 'Saving...' : 'Save Company'}
@@ -529,6 +609,52 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!heroChanged || working === 'hero'}>
           {working === 'hero' ? 'Saving...' : 'Save Hero'}
+        </button>
+      </form>
+
+      <form
+        id="stats"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => saveTextSection(event, 'stats', stats, setSavedStats, 'Stats')}
+      >
+        <h2>Stats</h2>
+        <div className={styles.grid}>
+          {stats.map((stat, index) => (
+            <div className={styles.itemEditor} key={stat.id}>
+              <h3>Stat {index + 1}</h3>
+              <label>
+                Number
+                <input
+                  type="number"
+                  value={stat.target ?? ''}
+                  onChange={(event) =>
+                    setStats((current) =>
+                      current.map((entry, entryIndex) =>
+                        entryIndex === index ? { ...entry, target: Number(event.target.value) } : entry
+                      )
+                    )
+                  }
+                />
+              </label>
+              <label className={styles.optionField}>
+                Label
+                <input
+                  value={stat.label ?? ''}
+                  onChange={(event) =>
+                    setStats((current) =>
+                      current.map((entry, entryIndex) =>
+                        entryIndex === index ? { ...entry, label: event.target.value } : entry
+                      )
+                    )
+                  }
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+        <button type="submit" disabled={!statsChanged || working === 'stats'}>
+          {working === 'stats' ? 'Saving...' : 'Save Stats'}
         </button>
       </form>
 
@@ -734,6 +860,61 @@ export default function AdminContentEditor() {
 
         <button type="submit" disabled={!aboutChanged || working === 'about'}>
           {working === 'about' ? 'Saving...' : 'Save About'}
+        </button>
+      </form>
+
+      <form
+        id="photo-callout"
+        data-admin-section
+        className={styles.card}
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveImageSection(
+            'photoCallout',
+            photoCallout,
+            photoCalloutFile,
+            setPhotoCallout,
+            setSavedPhotoCallout,
+            setPhotoCalloutFile,
+            setPhotoCalloutPreview,
+            setPhotoCalloutInputKey
+          );
+        }}
+      >
+        <h2>Photo Callout</h2>
+        <div className={styles.grid}>
+          <label>
+            Title
+            <input value={photoCallout.title ?? ''} onChange={(event) => update(setPhotoCallout, 'title', event.target.value)} />
+          </label>
+          <label>
+            Accent Title
+            <input value={photoCallout.titleAccent ?? ''} onChange={(event) => update(setPhotoCallout, 'titleAccent', event.target.value)} />
+          </label>
+          <label className={styles.fullWidth}>
+            Description
+            <textarea value={photoCallout.description ?? ''} onChange={(event) => update(setPhotoCallout, 'description', event.target.value)} />
+          </label>
+          <label>
+            Button Text
+            <input value={photoCallout.button?.label ?? ''} onChange={(event) => updateNested(setPhotoCallout, 'button', 'label', event.target.value)} />
+          </label>
+          <label>
+            Image Description
+            <input value={photoCallout.image?.alt ?? ''} onChange={(event) => updateNested(setPhotoCallout, 'image', 'alt', event.target.value)} />
+          </label>
+        </div>
+
+        <ImageEditor
+          title="Photo Callout"
+          image={photoCallout.image}
+          preview={photoCalloutPreview}
+          inputKey={photoCalloutInputKey}
+          onChange={(event) => chooseImage(event, setPhotoCalloutFile, photoCalloutPreview, setPhotoCalloutPreview)}
+        />
+
+        <button type="submit" disabled={!photoCalloutChanged || working === 'photoCallout'}>
+          {working === 'photoCallout' ? 'Saving...' : 'Save Photo Callout'}
         </button>
       </form>
 

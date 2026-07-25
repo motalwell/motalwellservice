@@ -187,3 +187,17 @@
 .optionField {
   margin-top: 18px;
 }
+
+.sectionNav {
+  scrollbar-width: thin;
+}
+
+.card input:focus,
+.card textarea:focus {
+  outline: 2px solid rgba(229, 107, 31, .25);
+  border-color: #e56b1f;
+}
+
+.card input[type='number'] {
+  appearance: textfield;
+}

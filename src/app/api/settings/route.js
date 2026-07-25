@@ -14,8 +14,11 @@ export async function GET(request) {
   const [settings] = await sql`
     SELECT
       content->'company' AS company,
+      content->'navigation' AS navigation,
       content->'hero' AS hero,
+      content->'stats' AS stats,
       content->'about' AS about,
+      content->'photoCallout' AS "photoCallout",
       content->'servicesSection' AS "servicesSection",
       content->'services' AS services,
       content->'process' AS process,
