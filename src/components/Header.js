@@ -31,13 +31,13 @@ export default function Header({ company, navigation }) {
       <div className="topbar">
         <span className="license-badge">{company.licenseBadge}</span>
         <div className="topbar-contact">
-          <a href={`tel:${company.phoneLink}`}>
+          <a href={`tel:${company.phoneLink}`} aria-label={`Call ${company.phoneDisplay}` }>
             <Phone size={15} strokeWidth={2} aria-hidden="true" />
-            <span>{company.phoneDisplay}</span>
+            <span className="topbar-phone-text">{company.phoneDisplay}</span>
           </a>
-          <a href={`mailto:${company.email}`}>
+          <a href={`mailto:${company.email}`} aria-label={`Email ${company.email}` }>
             <Mail size={15} strokeWidth={2} aria-hidden="true" />
-            <span>{company.email}</span>
+            <span className="topbar-email-text">{company.email}</span>
           </a>
         </div>
       </div>

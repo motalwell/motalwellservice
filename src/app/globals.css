@@ -895,3 +895,244 @@
       .contact-item { gap: .75rem; }
       .contact-icon { width: 48px; height: 48px; }
     }
+
+/* ── PHASE TWO POLISH ── */
+
+/* Responsive hero sizing keeps the opening image strong without overwhelming
+   laptop screens or crowding tall/narrow phones. */
+.hero {
+  min-height: 620px;
+  height: calc(100svh - 100px);
+  max-height: 760px;
+}
+
+/* Keep the primary content sections on one visual grid. */
+.process-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Service photography remains proportional at every card width. */
+.service-img,
+.service-img-placeholder {
+  aspect-ratio: 16 / 9;
+  height: auto;
+}
+
+/* Clear keyboard focus treatment across the public home page. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(212, 98, 26, .42);
+  outline-offset: 3px;
+}
+
+.quote-form input:focus-visible,
+.quote-form textarea:focus-visible,
+.quote-form select:focus-visible {
+  border-color: var(--orange);
+  outline-offset: 1px;
+}
+
+.form-submit:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+
+footer .logo-icon {
+  width: 32px;
+  height: 32px;
+  font-size: .95rem;
+}
+
+.footer-right span {
+  display: inline-block;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    min-height: 500px;
+    height: min(68svh, 600px);
+    max-height: 600px;
+  }
+
+  .hero-bg {
+    background-position: center 42%;
+  }
+
+  .photo-strip {
+    height: 400px;
+  }
+
+  .photo-strip img {
+    object-position: center 35%;
+  }
+
+  .about-years {
+    right: .75rem;
+    bottom: .75rem;
+    padding: 1.1rem 1.25rem;
+  }
+
+  .about-years .num {
+    font-size: 2.35rem;
+  }
+
+  footer {
+    align-items: center;
+  }
+
+  .footer-brand {
+    align-items: center;
+  }
+
+  .footer-right {
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 510px;
+    height: min(72svh, 570px);
+    max-height: 570px;
+  }
+
+  .hero-bg {
+    background-position: 58% center;
+  }
+
+  .photo-strip {
+    height: 430px;
+  }
+
+  .photo-strip-overlay {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .photo-strip-overlay h2 {
+    font-size: clamp(1.9rem, 10vw, 2.6rem);
+    line-height: 1.08;
+  }
+
+  .photo-strip-overlay p {
+    line-height: 1.65;
+    max-width: 32rem;
+  }
+
+  .photo-strip-overlay .btn-primary {
+    width: 100%;
+    max-width: 22rem;
+  }
+
+  .service-body {
+    padding: 1.35rem 1.35rem 1.6rem;
+  }
+
+  .about-years {
+    padding: .85rem 1rem;
+    right: .6rem;
+    bottom: .6rem;
+  }
+
+  .about-years .num {
+    font-size: 2rem;
+  }
+
+  .about-years .lbl {
+    font-size: .68rem;
+  }
+
+  footer .logo {
+    justify-content: center;
+  }
+
+  .footer-right {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    line-height: 1.45;
+  }
+
+  .footer-divider {
+    display: none !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .topbar {
+    align-items: center;
+  }
+
+  .topbar-contact {
+    flex-direction: row;
+    align-items: center;
+    gap: .8rem;
+  }
+
+  .topbar-email-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .topbar-phone-text {
+    white-space: nowrap;
+  }
+
+  .topbar a {
+    min-height: 30px;
+  }
+
+  .topbar a[href^="mailto:"] {
+    width: 30px;
+    justify-content: center;
+  }
+
+  .hero {
+    min-height: 500px;
+    height: min(74svh, 555px);
+  }
+
+  .hero-tag {
+    margin-bottom: 1rem;
+  }
+
+  .photo-strip {
+    height: 450px;
+  }
+
+  footer .logo {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
