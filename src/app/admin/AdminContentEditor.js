@@ -94,6 +94,11 @@ export default function AdminContentEditor() {
     return () => observer.disconnect();
   }, [company]);
 
+  useEffect(() => {
+    const activeLink = document.querySelector(`.${styles.activeNav}`);
+    activeLink?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, [activeSection]);
+
   const companyChanged = useMemo(
     () => JSON.stringify(company) !== savedCompany || JSON.stringify(navigation) !== savedNavigation,
     [company, navigation, savedCompany, savedNavigation]
@@ -281,6 +286,25 @@ export default function AdminContentEditor() {
       else delete next[serviceId];
       return next;
     });
+  }
+
+  function removeServiceImageSelection(serviceId) {
+    if (servicePreviews[serviceId]) {
+      URL.revokeObjectURL(servicePreviews[serviceId]);
+    }
+
+    setServiceFiles((current) => {
+      const next = { ...current };
+      delete next[serviceId];
+      return next;
+    });
+    setServicePreviews((current) => {
+      const next = { ...current };
+      delete next[serviceId];
+      return next;
+    });
+    setServiceInputKey((current) => current + 1);
+    setMessage('');
   }
 
   async function fetchWithTimeout(url, options, timeoutMs = 90000) {
@@ -671,8 +695,16 @@ export default function AdminContentEditor() {
           title="Hero"
           image={hero.image}
           preview={heroPreview}
+          selectedFile={heroFile}
           inputKey={heroInputKey}
           onChange={(event) => chooseImage(event, setHeroFile, heroPreview, setHeroPreview)}
+          onRemove={() => {
+            if (heroPreview) URL.revokeObjectURL(heroPreview);
+            setHeroFile(null);
+            setHeroPreview('');
+            setHeroInputKey((current) => current + 1);
+            setMessage('');
+          }}
         />
 
         <button type="submit" disabled={!heroChanged || working === 'hero'}>
@@ -848,8 +880,10 @@ export default function AdminContentEditor() {
               title={`Service ${serviceIndex + 1}`}
               image={service.image}
               preview={servicePreviews[service.id] ?? ''}
+              selectedFile={serviceFiles[service.id] ?? null}
               inputKey={`${serviceInputKey}-${service.id}`}
               onChange={(event) => chooseServiceImage(event, service.id)}
+              onRemove={() => removeServiceImageSelection(String(service.id))}
             />
           </div>
         ))}
@@ -922,8 +956,16 @@ export default function AdminContentEditor() {
           title="About"
           image={about.image}
           preview={aboutPreview}
+          selectedFile={aboutFile}
           inputKey={aboutInputKey}
           onChange={(event) => chooseImage(event, setAboutFile, aboutPreview, setAboutPreview)}
+          onRemove={() => {
+            if (aboutPreview) URL.revokeObjectURL(aboutPreview);
+            setAboutFile(null);
+            setAboutPreview('');
+            setAboutInputKey((current) => current + 1);
+            setMessage('');
+          }}
         />
 
         <button type="submit" disabled={!aboutChanged || working === 'about'}>
@@ -977,8 +1019,16 @@ export default function AdminContentEditor() {
           title="Photo Callout"
           image={photoCallout.image}
           preview={photoCalloutPreview}
+          selectedFile={photoCalloutFile}
           inputKey={photoCalloutInputKey}
           onChange={(event) => chooseImage(event, setPhotoCalloutFile, photoCalloutPreview, setPhotoCalloutPreview)}
+          onRemove={() => {
+            if (photoCalloutPreview) URL.revokeObjectURL(photoCalloutPreview);
+            setPhotoCalloutFile(null);
+            setPhotoCalloutPreview('');
+            setPhotoCalloutInputKey((current) => current + 1);
+            setMessage('');
+          }}
         />
 
         <button type="submit" disabled={!photoCalloutChanged || working === 'photoCallout'}>
@@ -1287,7 +1337,15 @@ export default function AdminContentEditor() {
   );
 }
 
-function ImageEditor({ title, image, preview, inputKey, onChange }) {
+function formatFileSize(bytes) {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '';
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function ImageEditor({ title, image, preview, selectedFile, inputKey, onChange, onRemove }) {
+  const inputId = `image-upload-${String(title).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${inputKey}`;
+
   return (
     <div className={styles.imageEditor}>
       <div>
@@ -1296,15 +1354,36 @@ function ImageEditor({ title, image, preview, inputKey, onChange }) {
       </div>
       <div>
         <h3>{preview ? 'Selected New Image' : `Replace ${title} Image`}</h3>
-        {preview && <img src={preview} alt={`Selected ${title} preview`} />}
-        <input
-          key={inputKey}
-          className={styles.fileInput}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={onChange}
-        />
-        <p className={styles.help}>JPG, PNG or WEBP. Maximum 6 MB.</p>
+        <div className={`${styles.uploadPanel} ${preview ? styles.uploadPanelSelected : ''}`}>
+          {preview && <img src={preview} alt={`Selected ${title} preview`} />}
+
+          <input
+            key={inputKey}
+            id={inputId}
+            className={styles.visuallyHiddenFileInput}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={onChange}
+          />
+
+          <label className={styles.filePickerButton} htmlFor={inputId}>
+            {preview ? 'Choose Different Image' : 'Choose New Image'}
+          </label>
+
+          {selectedFile ? (
+            <div className={styles.selectedFileInfo}>
+              <span className={styles.selectedFileName}>{selectedFile.name}</span>
+              <span className={styles.selectedFileSize}>{formatFileSize(selectedFile.size)}</span>
+              <button className={styles.removeFileButton} type="button" onClick={onRemove}>
+                Remove selection
+              </button>
+            </div>
+          ) : (
+            <p className={styles.noFileSelected}>No image selected</p>
+          )}
+
+          <p className={styles.help}>JPG, PNG or WEBP. Maximum 6 MB.</p>
+        </div>
       </div>
     </div>
   );

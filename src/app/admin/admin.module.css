@@ -139,12 +139,6 @@
   background: #edf0f2;
 }
 
-.fileInput {
-  margin-top: 12px !important;
-  padding: 9px !important;
-  background: white;
-}
-
 .help {
   margin: 7px 0 0;
   color: #66737d;
@@ -208,4 +202,160 @@
   z-index: 4;
   margin-bottom: 18px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, .1);
+}
+
+/* Phase Three admin polish */
+.uploadPanel {
+  min-height: 210px;
+  padding: 20px;
+  border: 1px dashed #b8c2c9;
+  background: #f8fafb;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.uploadPanelSelected {
+  justify-content: flex-start;
+}
+
+.uploadPanel img {
+  margin-bottom: 16px;
+}
+
+.visuallyHiddenFileInput {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.filePickerButton {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border: 2px solid #e56b1f;
+  background: #e56b1f;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.filePickerButton:hover {
+  background: #c95616;
+  border-color: #c95616;
+}
+
+.visuallyHiddenFileInput:focus-visible + .filePickerButton {
+  outline: 3px solid rgba(229, 107, 31, .28);
+  outline-offset: 3px;
+}
+
+.noFileSelected {
+  margin: 10px 0 0;
+  color: #66737d;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+.selectedFileInfo {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #d8dfe3;
+  background: white;
+  font-family: Arial, sans-serif;
+}
+
+.selectedFileName {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #172938;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.selectedFileSize {
+  display: block;
+  margin-top: 3px;
+  color: #66737d;
+  font-size: 12px;
+}
+
+.card .removeFileButton {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #a52828;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.card .removeFileButton:hover {
+  color: #7f1d1d;
+}
+
+.card > button[type='submit'] {
+  min-width: 130px;
+  transition: background-color .15s ease, opacity .15s ease;
+}
+
+.card > button[type='submit']:not(:disabled):hover {
+  background: #c95616;
+}
+
+.card > button[type='submit']:disabled {
+  background: #e8a57b;
+  color: rgba(255, 255, 255, .92);
+  opacity: 1;
+}
+
+.sectionNav {
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+}
+
+.sectionNav a {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+}
+
+@media (max-width: 640px) {
+  .sectionNav {
+    gap: 4px;
+    padding: 9px 8px;
+  }
+
+  .sectionNav a {
+    padding: 8px 11px;
+    font-size: 13px;
+  }
+
+  .uploadPanel {
+    min-height: 170px;
+    padding: 16px;
+  }
+
+  .filePickerButton {
+    width: 100%;
+  }
+
+  .card > button[type='submit'] {
+    width: 100%;
+  }
 }
