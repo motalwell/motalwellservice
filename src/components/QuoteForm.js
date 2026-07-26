@@ -64,8 +64,7 @@ export default function QuoteForm({ quoteForm, onSuccess }) {
   };
 
   return (
-    <section id="quoteForm2">
-      <br />
+    <section id="quoteForm2" className="quote-form-wrap">
       <div className="quote-form">
         <h3>{quoteForm.title}</h3>
         <p className="form-sub">{quoteForm.subtitle}</p>
