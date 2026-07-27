@@ -21,14 +21,23 @@
   top: 0;
   z-index: 5;
   display: flex;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  align-items: center;
+  justify-content: flex-start;
   gap: 10px;
   margin-bottom: 20px;
   padding: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: #172938;
+  border-bottom: 8px solid #e56b1f;
   box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
 }
 
 .sectionNav a {
+  flex: 0 0 auto;
   padding: 8px 14px;
   color: white;
   font-family: Arial, sans-serif;
