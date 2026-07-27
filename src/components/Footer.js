@@ -20,8 +20,9 @@ export default function Footer({ company, footer }) {
             <span className="footer-contact-separator" aria-hidden="true">|</span>
             <a href={`mailto:${company.email}`}>{company.email}</a>
           </div>
-          {footer?.copyright ? <div className="footer-copyright">{footer.copyright}</div> : null}
         </div>
+
+        {footer?.copyright ? <div className="footer-copyright">{footer.copyright}</div> : null}
       </div>
     </footer>
   );

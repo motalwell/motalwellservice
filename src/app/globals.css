@@ -1156,7 +1156,7 @@ footer .logo-icon {
 
 /* ── FINAL RESPONSIVE BRAND HEADER / FOOTER ── */
 .main-nav {
-  min-height: 112px;
+  min-height: 88px;
   height: auto;
   padding: 0 5rem;
 }
@@ -1198,7 +1198,7 @@ footer .logo-icon {
 
 @media (max-width: 1100px) and (min-width: 901px) {
   .main-nav {
-    min-height: 98px;
+    min-height: 82px;
     padding-left: 2rem;
     padding-right: 2rem;
   }
@@ -1377,5 +1377,263 @@ footer .logo-icon {
   .footer-copyright {
     margin-top: .38rem;
     font-size: .74rem;
+  }
+}
+
+/* ── FINAL COMPACT HEADER / BALANCED FOOTER ALIGNMENT ── */
+@media (min-width: 901px) {
+  .main-nav {
+    height: 72px;
+    min-height: 72px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .header-logo-link {
+    width: 330px;
+    height: 62px;
+    overflow: hidden;
+    align-items: center;
+  }
+
+  .header-logo-image {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    transform: scale(1.07);
+    transform-origin: center;
+  }
+}
+
+.site-footer {
+  padding: .35rem 2.25rem .22rem;
+}
+
+.footer-inner {
+  max-width: 1480px;
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 2rem;
+  row-gap: 0;
+}
+
+.footer-brand-mark {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  overflow: hidden;
+  width: 235px;
+  height: 61px;
+}
+
+.site-footer .footer-logo-image {
+  width: 235px;
+  max-width: none;
+  height: auto;
+  transform: scale(1.07);
+  transform-origin: center;
+}
+
+.footer-contact-block {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+}
+
+.footer-copyright {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: center;
+  margin-top: -.08rem;
+  padding-bottom: .05rem;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .main-nav {
+    height: 62px;
+    min-height: 62px;
+  }
+
+  .header-logo-link {
+    height: 54px;
+    overflow: hidden;
+  }
+
+  .header-logo-image {
+    transform: scale(1.06);
+    transform-origin: center;
+  }
+
+  .site-footer {
+    padding: .45rem 1.25rem .35rem;
+  }
+
+  .footer-inner {
+    display: flex;
+    min-height: 0;
+    align-items: center;
+    gap: .35rem;
+  }
+
+  .footer-brand-mark {
+    width: auto;
+    height: 55px;
+    justify-content: center;
+  }
+
+  .site-footer .footer-logo-image {
+    width: 205px;
+  }
+
+  .footer-contact-block {
+    width: 100%;
+    text-align: center;
+  }
+
+  .footer-contact-line {
+    justify-content: center;
+  }
+
+  .footer-copyright {
+    width: 100%;
+    margin-top: .05rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .main-nav {
+    height: 58px;
+    min-height: 58px;
+  }
+
+  .header-logo-link {
+    height: 50px;
+  }
+
+  .footer-brand-mark {
+    height: 50px;
+  }
+
+  .site-footer .footer-logo-image {
+    width: 185px;
+  }
+}
+
+/* ── LOGO VISIBILITY CORRECTION ──
+   Keep both brand marks fully visible while retaining a compact layout. */
+@media (min-width: 901px) {
+  .main-nav {
+    height: 82px;
+    min-height: 82px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .header-logo-link {
+    width: 285px;
+    height: auto;
+    max-width: 32vw;
+    overflow: visible;
+  }
+
+  .header-logo-image {
+    width: 100%;
+    height: auto;
+    max-height: 74px;
+    object-fit: contain;
+    transform: none;
+  }
+}
+
+.site-footer {
+  padding-top: .35rem;
+  padding-bottom: .3rem;
+}
+
+.footer-inner {
+  min-height: 76px;
+}
+
+.footer-brand-mark {
+  width: 225px;
+  height: auto;
+  min-height: 58px;
+  overflow: visible;
+  align-items: center;
+}
+
+.site-footer .footer-logo-image {
+  width: 225px;
+  height: auto;
+  max-height: 64px;
+  object-fit: contain;
+  transform: none;
+}
+
+.footer-copyright {
+  margin-top: .05rem;
+  padding-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .main-nav {
+    height: 68px;
+    min-height: 68px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
+  .header-logo-link {
+    width: 220px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .header-logo-image {
+    width: 100%;
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+    transform: none;
+  }
+
+  .footer-brand-mark {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .site-footer .footer-logo-image {
+    width: 205px;
+    height: auto;
+    max-height: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .main-nav {
+    height: 62px;
+    min-height: 62px;
+  }
+
+  .header-logo-link {
+    width: 190px;
+    height: auto;
+  }
+
+  .header-logo-image {
+    max-height: 54px;
+  }
+
+  .site-footer .footer-logo-image {
+    width: 185px;
   }
 }
