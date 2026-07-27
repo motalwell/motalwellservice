@@ -1136,3 +1136,8 @@ footer .logo-icon {
     animation-iteration-count: 1 !important;
   }
 }
+
+.logo-nav-image{width:220px;height:auto;display:block;}
+.footer-logo-image{width:150px;height:auto;display:block;margin:0 auto 1rem;}
+.footer-brand{text-align:center;}
+@media (max-width:900px){.logo-nav-image{width:170px;}}

@@ -2,13 +2,18 @@
 
 import { Mail, Menu, Phone, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-function Logo({ company }) {
+function Logo() {
   return (
-    <div className="logo">
-      <div className="logo-icon">{company.logoIcon}</div>
-      {company.logoPrimary} <span>&nbsp;{company.logoSecondary}</span>
-    </div>
+    <Image
+      src="/icons/logoNav.png"
+      alt="Motal Well Drilling Services"
+      width={320}
+      height={78}
+      className="logo-nav-image"
+      priority
+    />
   );
 }
 

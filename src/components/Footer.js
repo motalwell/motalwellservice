@@ -1,11 +1,10 @@
+import Image from 'next/image';
+
 export default function Footer({ company, footer }) {
   return (
     <footer>
       <div className="footer-brand">
-        <div className="logo">
-          <div className="logo-icon">{company.logoIcon}</div>
-          {company.logoPrimary} <span>&nbsp;{company.logoSecondary}</span>
-        </div>
+        <Image src="/icons/logoBlock.png" alt="Motal Well Drilling Services" width={180} height={220} className="footer-logo-image" />
         <div className="footer-copy">{footer.copyright}</div>
       </div>
       <div className="footer-right">
