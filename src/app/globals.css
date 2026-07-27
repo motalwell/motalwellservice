@@ -1667,3 +1667,10 @@ footer .logo-icon {
     padding-bottom: .28rem;
   }
 }
+
+/* Footer logo provides the discreet entry point to the admin login. */
+.footer-logo-link {
+  display: block;
+  line-height: 0;
+  cursor: pointer;
+}
