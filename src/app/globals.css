@@ -25,7 +25,7 @@
     .topbar {
       background: var(--navy);
       color: var(--mid);
-      font-size: .82rem;
+      font-size: .9rem;
       padding: .5rem 5rem;
       display: flex;
       justify-content: space-between;
@@ -106,7 +106,7 @@
       display: block;
       text-decoration: none;
       color: var(--navy);
-      font-size: .82rem;
+      font-size: .9rem;
       font-weight: 600;
       letter-spacing: .08em;
       text-transform: uppercase;
@@ -182,10 +182,10 @@
 
     .hero p {
       font-size: 1rem;
-      color: rgba(255,255,255,.78);
+      color: rgba(255,255,255,.9);
       line-height: 1.75;
       margin-bottom: 2rem;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -272,11 +272,11 @@
     .section-title span { color: var(--orange); }
     .section-intro {
       font-size: .95rem;
-      color: #5a6a78;
+      color: #465766;
       line-height: 1.75;
       max-width: 560px;
       margin-bottom: 3rem;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* ── SERVICES ── */
@@ -363,12 +363,12 @@
       flex: 1;
     }
     .service-card ul li {
-      font-size: .88rem;
-      color: #5a6a78;
+      font-size: .98rem;
+      color: #465766;
       padding: .3rem 0;
       padding-left: 1.2rem;
       position: relative;
-      font-weight: 300;
+      font-weight: 400;
     }
     .service-card ul li::before {
       content: '▸';
@@ -379,10 +379,10 @@
     }
 
     .service-card p {
-      font-size: .88rem;
-      color: #5a6a78;
+      font-size: .98rem;
+      color: #465766;
       line-height: 1.75;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     .service-link {
@@ -449,7 +449,7 @@
       color: #4a5a68;
       line-height: 1.8;
       margin-bottom: 1rem;
-      font-weight: 300;
+      font-weight: 400;
     }
     .about-text strong { color: var(--navy); font-weight: 600; }
 
@@ -515,10 +515,10 @@
       margin-bottom: .6rem;
     }
     .process-step p {
-      font-size: .85rem;
-      color: rgba(255,255,255,.45);
+      font-size: .95rem;
+      color: rgba(255,255,255,.72);
       line-height: 1.7;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* ── FULL-WIDTH PHOTO STRIP ── */
@@ -556,7 +556,7 @@
       color: rgba(255,255,255,.7);
       font-size: .95rem;
       margin-bottom: 1.5rem;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* ── FAQ ── */
@@ -612,10 +612,10 @@
       margin-bottom: .7rem;
     }
     .faq-item p {
-      font-size: .88rem;
-      color: #5a6a78;
+      font-size: .98rem;
+      color: #465766;
       line-height: 1.75;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     /* ── CONTACT ── */
@@ -632,9 +632,9 @@
     .contact-info h2 { margin-bottom: 1rem; }
     .contact-info p {
       font-size: .95rem;
-      color: #5a6a78;
+      color: #465766;
       line-height: 1.75;
-      font-weight: 300;
+      font-weight: 400;
       margin-bottom: 2rem;
     }
 
@@ -659,7 +659,7 @@
       object-fit: contain;
     }
     .contact-detail {
-      font-size: .88rem;
+      font-size: .98rem;
       color: #4a5a68;
       line-height: 1.6;
     }
@@ -691,7 +691,7 @@
       margin-bottom: .4rem;
     }
     .quote-form .form-sub {
-      font-size: .83rem;
+      font-size: .92rem;
       color: var(--mid);
       margin-bottom: 1.5rem;
     }
@@ -793,7 +793,7 @@
     .modal-title span { color: var(--orange); }
     .modal-body {
       font-size: .9rem;
-      color: #5a6a78;
+      color: #465766;
       line-height: 1.7;
       margin-bottom: 1.5rem;
     }
@@ -883,7 +883,7 @@
       .logo-icon { width: 34px; height: 34px; font-size: 1rem; }
       .hero-content { padding: 0 1.25rem; }
       .hero h1 { font-size: clamp(2.35rem, 12vw, 3.15rem); }
-      .hero p { font-size: .93rem; }
+      .hero p { font-size: 1rem; }
       .hero-btns { gap: .7rem; }
       .btn-primary, .btn-outline { width: 100%; text-align: center; }
       .services, .about, .process, .contact-section, .faq { padding: 3rem 1.25rem; }
