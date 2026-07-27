@@ -8,19 +8,11 @@ function ResponsiveLogo() {
   return (
     <a href="#top" className="header-logo-link" aria-label="Motal Well Drilling Services home">
       <Image
-        src="/icons/logoBlock.png"
-        alt="Motal Well Drilling Services"
-        width={260}
-        height={260}
-        className="header-logo-image header-logo-desktop"
-        priority
-      />
-      <Image
         src="/icons/logoNav.png"
         alt="Motal Well Drilling Services"
-        width={420}
-        height={150}
-        className="header-logo-image header-logo-mobile"
+        width={890}
+        height={230}
+        className="header-logo-image"
         priority
       />
     </a>

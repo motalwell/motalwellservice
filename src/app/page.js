@@ -31,7 +31,7 @@ export default async function Home() {
         quoteForm={content.quoteForm}
         successModal={content.successModal}
       />
-      <Footer />
+      <Footer company={content.company} footer={content.footer} />
     </main>
   );
 }
