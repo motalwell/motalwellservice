@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, Menu, Phone, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -32,23 +32,8 @@ export default function Header({ company, navigation }) {
   }, []);
 
   return (
-    <>
-      <div className="topbar">
-        <span className="license-badge">{company.licenseBadge}</span>
-        <div className="topbar-contact">
-          <a href={`tel:${company.phoneLink}`} aria-label={`Call ${company.phoneDisplay}` }>
-            <Phone size={15} strokeWidth={2} aria-hidden="true" />
-            <span className="topbar-phone-text">{company.phoneDisplay}</span>
-          </a>
-          <a href={`mailto:${company.email}`} aria-label={`Email ${company.email}` }>
-            <Mail size={15} strokeWidth={2} aria-hidden="true" />
-            <span className="topbar-email-text">{company.email}</span>
-          </a>
-        </div>
-      </div>
-
-      <nav className="main-nav">
-        <Logo company={company} />
+    <nav className="main-nav">
+      <Logo />
         <button
           type="button"
           className="mobile-menu-button"
@@ -72,7 +57,6 @@ export default function Header({ company, navigation }) {
             </li>
           ))}
         </ul>
-      </nav>
-    </>
+    </nav>
   );
 }

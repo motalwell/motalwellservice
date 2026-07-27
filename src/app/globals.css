@@ -1137,7 +1137,19 @@ footer .logo-icon {
   }
 }
 
-.logo-nav-image{width:220px;height:auto;display:block;}
+/* Crop the built-in white padding from the navigation logo. */
+.logo-nav-image {
+  width: 220px;
+  height: 58px;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
 .footer-logo-image{width:150px;height:auto;display:block;margin:0 auto 1rem;}
 .footer-brand{text-align:center;}
-@media (max-width:900px){.logo-nav-image{width:170px;}}
+@media (max-width:900px){
+  .logo-nav-image {
+    width: 170px;
+    height: 46px;
+  }
+}
