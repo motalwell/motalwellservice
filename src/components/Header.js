@@ -1,23 +1,33 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-function Logo() {
+function ResponsiveLogo() {
   return (
-    <Image
-      src="/icons/logoNav.png"
-      alt="Motal Well Drilling Services"
-      width={320}
-      height={78}
-      className="logo-nav-image"
-      priority
-    />
+    <a href="#top" className="header-logo-link" aria-label="Motal Well Drilling Services home">
+      <Image
+        src="/icons/logoBlock.png"
+        alt="Motal Well Drilling Services"
+        width={260}
+        height={260}
+        className="header-logo-image header-logo-desktop"
+        priority
+      />
+      <Image
+        src="/icons/logoNav.png"
+        alt="Motal Well Drilling Services"
+        width={420}
+        height={150}
+        className="header-logo-image header-logo-mobile"
+        priority
+      />
+    </a>
   );
 }
 
-export default function Header({ company, navigation }) {
+export default function Header({ navigation }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -32,31 +42,31 @@ export default function Header({ company, navigation }) {
   }, []);
 
   return (
-    <nav className="main-nav">
-      <Logo />
-        <button
-          type="button"
-          className="mobile-menu-button"
-          aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={isMenuOpen}
-          aria-controls="primary-navigation"
-          onClick={() => setIsMenuOpen((open) => !open)}
-        >
-          {isMenuOpen ? <X size={26} aria-hidden="true" /> : <Menu size={28} aria-hidden="true" />}
-        </button>
-        <ul id="primary-navigation" className={isMenuOpen ? 'is-open' : undefined}>
-          {navigation.map((item) => (
-            <li key={item.id}>
-              <a
-                href={item.href}
-                className={item.isCta ? 'nav-cta' : undefined}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+    <nav id="top" className="main-nav">
+      <ResponsiveLogo />
+      <button
+        type="button"
+        className="mobile-menu-button"
+        aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        aria-expanded={isMenuOpen}
+        aria-controls="primary-navigation"
+        onClick={() => setIsMenuOpen((open) => !open)}
+      >
+        {isMenuOpen ? <X size={26} aria-hidden="true" /> : <Menu size={28} aria-hidden="true" />}
+      </button>
+      <ul id="primary-navigation" className={isMenuOpen ? 'is-open' : undefined}>
+        {navigation.map((item) => (
+          <li key={item.id}>
+            <a
+              href={item.href}
+              className={item.isCta ? 'nav-cta' : undefined}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }

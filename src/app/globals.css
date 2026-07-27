@@ -1153,3 +1153,119 @@ footer .logo-icon {
     height: 46px;
   }
 }
+
+/* ── FINAL RESPONSIVE BRAND HEADER / FOOTER ── */
+.main-nav {
+  height: 128px;
+  padding: 0 5rem;
+}
+
+.header-logo-link {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.header-logo-image {
+  display: block;
+  object-fit: contain;
+}
+
+.header-logo-desktop {
+  width: 132px;
+  height: 118px;
+}
+
+.header-logo-mobile {
+  display: none;
+}
+
+.site-footer {
+  min-height: 0;
+  padding: 1.15rem 2rem 1rem;
+  background: var(--white);
+  border-top: 3px solid var(--navy);
+  border-bottom: 3px solid var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-footer .footer-logo-image {
+  width: 250px;
+  height: 82px;
+  margin: 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 1100px) and (min-width: 901px) {
+  .main-nav {
+    height: 116px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .header-logo-desktop {
+    width: 118px;
+    height: 106px;
+  }
+
+  .main-nav a {
+    padding-left: .78rem;
+    padding-right: .78rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-nav {
+    height: 62px;
+    padding: 0 1.25rem;
+  }
+
+  .header-logo-link {
+    height: 100%;
+    max-width: calc(100% - 54px);
+  }
+
+  .header-logo-desktop {
+    display: none;
+  }
+
+  .header-logo-mobile {
+    display: block;
+    width: 190px;
+    height: 52px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .site-footer {
+    padding: .85rem 1rem .75rem;
+  }
+
+  .site-footer .footer-logo-image {
+    width: 220px;
+    height: 72px;
+  }
+}
+
+@media (max-width: 430px) {
+  .main-nav {
+    height: 58px;
+    padding: 0 .85rem;
+  }
+
+  .header-logo-mobile {
+    width: 168px;
+    height: 47px;
+  }
+
+  .site-footer .footer-logo-image {
+    width: min(205px, 82vw);
+    height: 68px;
+  }
+}
