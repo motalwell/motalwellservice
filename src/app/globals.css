@@ -29,7 +29,7 @@
       padding: .5rem 5rem;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
     }
     .topbar-contact {
       display: flex;
@@ -57,7 +57,7 @@
     /* ── MAIN NAV ── */
     nav {
       background: var(--white);
-      border-bottom: 4px solid var(--orange);
+      border-bottom: 8px solid var(--orange);
       position: sticky;
       top: 0;
       z-index: 300;
@@ -829,7 +829,7 @@
         left: 0;
         right: 0;
         background: var(--white);
-        border-bottom: 4px solid var(--orange);
+        border-bottom: 8px solid var(--orange);
         box-shadow: 0 8px 18px rgba(0,0,0,.12);
         padding: .75rem 2rem 1rem;
         flex-direction: column;
@@ -1181,7 +1181,7 @@ footer .logo-icon {
   min-height: 0;
   padding: 1.25rem 1.5rem;
   background: var(--white);
-  border-top: 4px solid var(--navy);
+  border-top: 8px solid var(--navy);
   border-bottom: 4px solid var(--orange);
   display: flex;
   align-items: center;
@@ -1254,7 +1254,7 @@ footer .logo-icon {
   min-height: 0;
   padding: .75rem 5rem;
   background: var(--white);
-  border-top: 4px solid var(--navy);
+  border-top: 8px solid var(--navy);
   border-bottom: 4px solid var(--orange);
   display: block;
 }
@@ -1262,7 +1262,7 @@ footer .logo-icon {
 .footer-inner {
   width: 100%;
   max-width: 1200px;
-  min-height: 78px;
+  min-height: 72px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -1318,7 +1318,9 @@ footer .logo-icon {
 }
 
 .footer-copyright {
-  margin-top: .28rem;
+  margin-top: 0;
+  position: relative;
+  bottom: 3px;
   color: #66727d;
   font-size: .78rem;
   line-height: 1.25;
@@ -1636,5 +1638,32 @@ footer .logo-icon {
 
   .site-footer .footer-logo-image {
     width: 185px;
+  }
+}
+
+/* ── FINAL FOOTER VERTICAL ALIGNMENT ──
+   Tighten the desktop footer and align the copyright with the lower
+   "SERVICES" line of the logo instead of the bottom edge of the footer. */
+@media (min-width: 901px) {
+  .site-footer {
+    padding-top: .1rem;
+    padding-bottom: .1rem;
+  }
+
+  .footer-inner {
+    min-height: 60px;
+  }
+
+  .footer-brand-mark {
+    min-height: 0;
+  }
+
+  .site-footer .footer-logo-image {
+    max-height: 58px;
+  }
+
+  .footer-copyright {
+    align-self: end;
+    padding-bottom: .28rem;
   }
 }
